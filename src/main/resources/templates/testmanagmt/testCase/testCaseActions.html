@@ -1,0 +1,242 @@
+<!DOCTYPE HTML>
+<html  lang="zh" xmlns:th="http://www.thymeleaf.org"
+xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<meta charset="utf-8">
+<head th:include="include :: header"></head>
+<body class="white-bg">
+<div class="wrapper wrapper-content animated fadeInRight ibox-content">
+	<h2 class="thin text-center" th:text="【+${testCase.testCaseName}+】动作编辑"></h2>
+	<h3 class="thin text-center" style="display:none" id="testCaseId" th:text="${testCase.testCaseId}"></h3>
+	
+	<!-- 页面得到的数据集合 -->
+	    <!-- mmap.put("testCaseActionsList", actionsList);
+		mmap.put("testCase", testCase); -->
+	
+	
+	<form class="form-horizontal m" id="form-testCaseParams-edit">
+		<div class="form-group">
+			<table class="table table-striped" id="stepsTable">
+				<thead>
+				<tr style="text-align: center;">
+					<!-- <th>动作编号</th> -->
+					<th>序号</th>
+					<th>动作</th>
+					<th>创建人</th>
+					<th>创建时间</th>
+					<th>备注</th>
+					<!-- <th>删除</th> -->
+				</tr>
+				</thead>
+				<tbody id="stepsTBody">
+				<tr th:each="stepsOb,iterStat : ${testCaseActionsList}">
+					<td width="10%">
+						<div class="col-sm-12 lf-td-div">
+							<label th:name="xuaho"  th:value="${iterStat.count}" th:text="${iterStat.count}"></label>
+						</div>
+					</td>
+					<td width="20%">
+						<div class="col-sm-12 lf-td-div">
+							<label th:name="action"  th:value="${stepsOb.actionName}" th:text="${stepsOb.actionName}"></label>
+						</div>
+					</td>
+					<td width="20%">
+						<div class="col-sm-12 lf-td-div">
+							<label th:name="createBy"  th:value="${stepsOb.createBy}" th:text="${stepsOb.createBy}"></label>
+						</div>
+					</td>
+					<td width="20%">
+						<div class="col-sm-12 lf-td-div">
+							<label th:name="createTime"  th:value="${stepsOb.createTime}" th:text="${stepsOb.createTime}"></label>
+						</div>
+					</td>
+					<td width="25%">
+						<div class="col-sm-12 lf-td-div">
+							<label th:name="remark"  th:value="${stepsOb.remark}" th:text="${stepsOb.remark}"></label>
+						</div>
+					</td>
+					<!-- <td width="10%" style="vertical-align: middle;">
+						<a class="fa fa-minus-circle fa-5" style="font-size: 20px; cursor: pointer;" data-toggle="tooltip" data-html="true" th:title="删除" onclick="delActions()"></a>
+					</td> -->
+				</tr>
+				</tbody>
+			</table>
+		</div>
+	</form>
+
+	<div class="row">
+		<div class="col-lg-4 text-center" style="width: 100%">
+		<shiro:hasPermission name="testmanagmt:testCase:edit">
+				<a class="btn btn-success btn-xs" onclick="showActionsModal()">
+		            <i class="fa fa-edit"></i> 编辑动作
+		        </a>
+		</shiro:hasPermission>
+			<!-- <button class="btn btn-info btn-edit system:post:edit" id="editButton" onclick="showParamsModal()" type="button" style="padding-left: 36px;padding-right: 36px;">编&nbsp;辑&nbsp;参&nbsp;数</button> -->
+		</div>
+	</div>
+
+</div>
+
+
+
+<div class="modal fade" id="actionsModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+	<div class="modal-dialog" role="document"  style="width:30%">
+		<div class="modal-content" >
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">×</span>
+				</button>
+				<h4 class="modal-title" id="myParamsLabel">动作</h4>
+			</div>
+			<div class="modal-body ibox-content">
+				<div class="col-sm-12 select-table table-striped">
+					<table id="bootstrap-table" data-mobile-responsive="true" style="table-layout:fixed"></table>
+				</div>
+			</div>
+			<div class="modal-footer">
+			    <button id="params-close" type="button" class="btn btn" onclick="closeActions()">取消</button>
+				<button id="params-save" type="button" class="btn btn-primary" onclick="addActions()">确定</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+
+<div th:include="include::footer"></div>
+<!-- bootstrap-suggest 下拉搜索框插件 -->
+<script th:src="@{/ajax/libs/bootstrap-suggest/bootstrap-suggest.min.js}"></script>
+<script>
+		function showActionsModal() {
+		$("#actionsModal").modal('show');
+	}
+		    var testCaseId = $("#testCaseId").html();
+		    //console.log($("#postId").html());
+		    
+	        
+	        //${postParamsList[0].postId}
+	        var prefix = ctx + "testmanagmt/projectCaseActions";
+	        var prefixadd = ctx + "testmanagmt/testCase";
+	        /* var prefix = ctx + "system/post";
+	        var modulePrefix = ctx + "testmanagmt/projectCaseModule"; */
+	        
+	        $(function() {
+	            var options = {
+	                url: prefixadd + "/actionsList",
+	                /* createUrl: prefix + "/add",
+	                updateUrl: prefix + "/edit/{id}",
+	                removeUrl: prefix + "/remove",
+					exportUrl: prefix + "/export", */
+					showSearch: false,   // 是否显示检索信息
+                    showRefresh: false, // 是否显示刷新按钮
+                    //showColumns: $.common.visible(options.showColumns), // 是否显示隐藏某列下拉框
+                    showColumns: false,
+                    pageSize: 100, 
+                    showToggle: false, 
+	                modalName: "用例动作",
+					search: false,
+					pageSize: 5000,
+					pagination: false,
+					queryParams: function(params) {
+		            	return {
+		        			// 传递参数查询参数
+		                    /* pageSize:       params.limit,
+		                    pageNum:        params.offset / params.limit + 1,
+		                    searchValue:    params.search,
+		                    orderByColumn:  params.sort,
+		                    isAsc:          params.order, */
+		                    testCaseId:      testCaseId
+		        		};
+					},
+			        showExport: false,
+	                columns: [{
+			            checkbox: true,
+			            field : 'flag',
+						formatter: function (value, row, index) {
+						        return {
+						            checked : row.flag//设置选中
+						        };
+						}
+			        },
+			        {
+						field : 'actionId', 
+						title : '动作ID',
+						visible:false,
+						width : '20%'
+					},
+					{
+	                    field: 'Number',
+	                    title: '序号',
+	                    width : '20%',
+	                    formatter: function (value, row, index) {
+	                        return index+1;
+	                    }
+					},
+					{
+						field : 'actionName', 
+						title : '动作',
+						width : '20%'
+					},
+					{
+						field : 'createBy', 
+						title : '创建人',
+						class : 'myTDLengthHidden',
+						width : '20%'
+					},
+					{
+						field : 'createTime', 
+						title : '创建时间',
+						visible: false,
+						width : '20%'
+					},
+					{
+						field : 'remark', 
+						title : '备注',
+						visible: false,
+						class : 'myTDLengthHidden',
+						width : '20%'
+					}]
+	            };
+	            $.table.init(options);
+	        });
+		    
+	        
+	        
+	         /*添加选择的用例到测试计划中*/
+		   function addActions(){
+		    	var rows = $.map($('#bootstrap-table').bootstrapTable('getSelections'), function (row) {
+	    	        return row;
+	    	    });
+		    	var params = {
+		    			"testCaseId":testCaseId,
+		    			"row":rows
+		    	};
+		    	console.log(testCaseId);
+		    	console.log(params);
+		    	
+		    	var localUrl = ctx + "testmanagmt/testCase/editActions/"+testCaseId;
+		    	
+	     		$.modal.confirm("确认保存动作到用例中吗?", function() {
+	     			console.log(params);
+					
+	     			$.operate.saveJsonUnBack1(prefixadd + "/addActions", JSON.stringify(params),localUrl);
+					$("#actionsModal").modal('hide');
+					
+	     			/* addParams(params,function(data){
+						location.replace(localUrl);
+					})
+	     			 */
+					/* setTimeout(function(){
+						location.replace(localUrl);
+					},800); */
+					//var index = parent.layer.getFrameIndex(window.name);
+			        //parent.layer.close(index);//关闭当前页
+	    		});
+	        	
+		    }
+	         
+		   function closeActions(){
+			   $("#actionsModal").modal('hide');
+			   
+		   }
+</script>
+</body>
+</html>

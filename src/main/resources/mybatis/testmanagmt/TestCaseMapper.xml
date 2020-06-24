@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.luckyframe.project.testmanagmt.testCase.mapper.TestCaseMapper">
+
+	<resultMap type="TestCase" id="TestCaseResult">
+		<id     property="testCaseId"        column="testcaseid"       />
+		<result property="testCaseName"      column="testcasename"     />
+		<result property="createBy"      column="createby"     />
+		<result property="createTime"    column="createtime"   />
+		<result property="updateBy"      column="updateby"     />
+		<result property="updateTime"    column="updatetime"   />
+		<result property="remark"        column="remark"        />
+	</resultMap>
+	
+	<resultMap type="ActionTime" id="TestCaseActionsResult">
+		<!-- <result property="testCaseId"        column="testcase_id"     /> -->
+		<result property="actionId"      column="action_id"     />
+		<result property="actionName"    column="action"     />
+		<result property="createBy"    column="create_by"     />
+		<result property="createTime"    column="create_time"     />
+		<result property="remark"      column="remark"     />
+		
+	</resultMap>
+	
+	<resultMap type="Action" id="ActionForTestCaseResult">
+		<id     property="actionId"        column="id"       />
+		<result property="actionName"      column="action"     />
+		<result property="createBy"      column="create_by"     />
+		<result property="createTime"    column="create_time"   />
+		<result property="remark"        column="remark"        />
+		<result property="flag"      column="flag"     />
+	</resultMap>
+	
+	
+	<sql id="selectTestCaseActionsVo">
+        select ta.testcase_id,ta.action_id,a.action,a.create_by,a.create_time,a.remark
+		from test_case_action ta left join action a on ta.action_id = a.id
+    </sql>
+
+	<select id="selectActionsList" parameterType="Integer" resultMap="TestCaseActionsResult">
+        <include refid="selectTestCaseActionsVo"/>
+        where ta.testcase_id = #{testCaseId}
+    </select>
+    
+    <delete id="deleteActions" parameterType="Integer">
+ 		delete from test_case_action where testcase_id = #{testCaseId}
+ 	</delete>
+ 	
+ 	<insert id="insertActions" parameterType="TestCaseAction">
+ 		insert into test_case_action(
+ 			testcase_id,action_id
+ 		)values(
+ 			#{testCaseId},#{actionId}
+ 		)
+	</insert>
+	
+	<sql id="selectTestCaseVo">
+        select tc.testcaseid,tc.testcasename, tc.createby, tc.createtime, tc.remark 
+		from test_case tc 
+    </sql>
+	
+	<select id="selectTestCaseList" parameterType="TestCase" resultMap="TestCaseResult">
+	    <include refid="selectTestCaseVo"/>
+		<where>
+			<if test="testCaseName != null and testCaseName != ''">
+				AND testCaseName like concat('%', #{testCaseName}, '%')
+			</if>
+			<if test="createBy != null and createBy != ''">
+				AND createBy like concat('%', #{createBy}, '%')
+			</if>
+		</where>
+		order by createtime desc
+	</select>
+	
+	<select id="selectTestCaseAll" resultMap="TestCaseResult">
+		<include refid="selectTestCaseVo"/>
+	</select>
+	
+	
+	<select id="selectTestCaseById" parameterType="Long" resultMap="TestCaseResult">
+		<include refid="selectTestCaseVo"/>
+		where testCaseId = #{testCaseId}
+	</select>
+	
+	<select id="checkTestCaseNameUnique" parameterType="String" resultMap="TestCaseResult">
+		<include refid="selectTestCaseVo"/>
+		 where testCasename=#{testCasename}
+	</select>
+	
+	
+ 	<delete id="deleteTestCaseByIds" parameterType="Long">
+ 		delete from test_case where testcaseid in
+ 		<foreach collection="array" item="testCaseId" open="(" separator="," close=")">
+ 			#{testCaseId}
+        </foreach> 
+ 	</delete>
+ 	
+ 	<update id="updateTestCase" parameterType="TestCase">
+ 		update test_case
+ 		<set>
+ 			<if test="testCaseName != null and testCaseName != ''">testcasename = #{testCaseName},</if>
+ 			<if test="remark != null">remark = #{remark},</if>
+ 			<if test="updateBy != null and updateBy != ''">updateby = #{updateBy},</if>
+ 			updatetime = sysdate()
+ 		</set>
+ 		where testcaseid = #{testCaseId}
+	</update>
+ 	
+ 	<insert id="insertTestCase" parameterType="TestCase" useGeneratedKeys="true" keyProperty="testCaseId">
+ 		insert into test_case(
+ 			<if test="testCaseId != null and testCaseId != 0">testcaseid,</if>
+ 			<if test="testCaseName != null and testCaseName != ''">testcasename,</if>
+ 			<if test="remark != null and remark != ''">remark,</if>
+ 			<if test="createBy != null and createBy != ''">createby,</if>
+ 			createtime
+ 		)values(
+ 			<if test="testCaseId != null and testCaseId != 0">#{testCaseId},</if>
+ 			<if test="testCaseName != null and testCaseName != ''">#{testCaseName},</if>
+ 			<if test="remark != null and remark != ''">#{remark},</if>
+ 			<if test="createBy != null and createBy != ''">#{createBy},</if>
+ 			sysdate()
+ 		)
+	</insert>
+	
+	<select id="selectActionListForTestCase" parameterType="Long" resultMap="ActionForTestCaseResult">
+		select p.id,p.action,p.create_by,p.create_time,p.remark,IF(q.testcase_id is null,'false','true') flag
+		from action p 
+		left join (select * from test_case_action where testcase_id=#{testCaseId}) q on p.id=q.action_id
+	</select>
+	
+	
+	<select id="testCaseIsOccupy" parameterType="String" resultType="java.util.HashMap">
+    	select CAST(count(id) AS CHAR(16)) count from plan_testcase  where testcase_id = #{testCaseId}
+    </select>
+</mapper> 

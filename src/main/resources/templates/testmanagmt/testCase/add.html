@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<meta charset="utf-8">
+<head th:include="include :: header"></head>
+<body class="white-bg">
+	<div class="wrapper wrapper-content animated fadeInRight ibox-content">
+		<form class="form-horizontal m" id="form-testCase-add">
+			
+			<!-- <div class="form-group">	
+				<label class="col-sm-3 control-label">项目名称：</label>
+				<div class="col-sm-8">
+					<select id="planId" name="planId" class="form-control m-b" th:with="type=${plans}" onchange="initializeModuleTree()">
+	                    <option th:each="plan : ${type}" th:text="${plan.planName}" th:value="${plan.planId}" th:selected="${plan.planId == defaultPlanId}"></option>
+	                </select>
+				</div>
+			</div> -->
+			
+			<div class="form-group">
+				<label class="col-sm-3 control-label"><font style = "color: red;">* </font>用例名称：</label>
+				<div class="col-sm-8">
+					<input class="form-control" type="text" name="testCaseName" id="testCaseName">
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="col-sm-3 control-label">备注：</label>
+				<div class="col-sm-8">
+					<textarea id="remark" name="remark" class="form-control" rows="8"></textarea>
+				</div>
+			</div>
+			<div class="form-group">	
+				<label class="col-sm-5 control-label">带 <font style = "color: red;">* </font> 的为必填项</label>
+			</div>
+		</form>
+	</div>
+	<div th:include="include::footer"></div>
+	<script type="text/javascript">
+		var prefix = ctx + "testmanagmt/testCase";
+	    
+	 	$("#form-testCase-add").validate({
+			rules:{
+				testCaseName:{
+					required:true,
+					remote: {
+		                url: ctx + "testmanagmt/testCase/checkTestCaseNameUnique",
+		                type: "post",
+		                dataType: "json",
+		                data: {
+		                	"testCaseName" : function() {
+		                        return $.common.trim($("#testCaseName").val());
+		                    }
+		                },
+		                dataFilter: function(data, type) {
+		                	return $.validate.unique(data);
+		                }
+		            }
+				},
+			},
+			messages: {
+		        "testCaseName": {
+		            remote: "用例名称已经存在"
+		        }
+		    }
+		});
+		
+		function submitHandler() {
+	        if ($.validate.form()) {
+	        	$.operate.save(prefix + "/add", $('#form-testCase-add').serialize());
+	        	console.log($('#form-testCase-add').serialize());
+	        }
+	    }
+	</script>
+</body>
+</html>

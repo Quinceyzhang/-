@@ -1,0 +1,240 @@
+<!DOCTYPE HTML>
+<html  lang="zh" xmlns:th="http://www.thymeleaf.org"
+xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<meta charset="utf-8">
+<head th:include="include :: header"></head>
+<body class="white-bg">
+<div class="wrapper wrapper-content animated fadeInRight ibox-content">
+	<h2 class="thin text-center" th:text="【+${projectPlan.planName}+】用例编辑"></h2>
+	<h3 class="thin text-center" style="display:none" id="planId" th:text="${projectPlan.planId}"></h3>
+	
+	<!-- 页面得到的数据集合 -->
+	    <!-- mmap.put("testCaseList", testCaseList);
+		mmap.put("testCaseListAll", testCaseListAll);
+		mmap.put("projectPlan", projectPlan); -->
+	
+	
+	<form class="form-horizontal m" id="form-testCaseParams-edit">
+		<div class="form-group">
+			<table class="table table-striped" id="stepsTable">
+				<thead>
+				<tr style="text-align: center;">
+				    <!-- <th>用例编号</th> -->
+				    <th>序号</th>
+					<th>用例名称</th>
+					<th>创建人</th>
+					<th>创建时间</th>
+					<th>备注</th>
+					<!-- <th>编辑用例</th> -->
+				</tr>
+				</thead>
+				<tbody id="stepsTBody">
+				<tr th:each="stepsOb,iterStat : ${testCaseList}">
+					<td width="15%" style={display:none;}>
+						<div class="col-sm-12 lf-td-div">
+							<label th:name="xuhao"  th:value="${iterStat.count}" th:text="${iterStat.count}"></label>
+						</div>
+					</td>
+					<td width="15%">
+						<div class="col-sm-12 lf-td-div">
+							<label th:name="testCaseName"  th:value="${stepsOb.testCaseName}" th:text="${stepsOb.testCaseName}"></label>
+						</div>
+					</td>
+					<td width="15%">
+						<div class="col-sm-12 lf-td-div">
+							<label th:name="createBy"  th:value="${stepsOb.createBy}" th:text="${stepsOb.createBy}"></label>
+						</div>
+					</td>
+					<td width="20%">
+						<div class="col-sm-12 lf-td-div">
+							<label th:name="createTime"  th:value="${stepsOb.createTime}" th:text="${stepsOb.createTime}"></label>
+						</div>
+					</td>
+					<td width="20%">
+						<div class="col-sm-12 lf-td-div">
+							<label th:name="remark"  th:value="${stepsOb.remark}" th:text="${stepsOb.remark}"></label>
+						</div>
+					</td>
+					
+				<!-- 	<td width="15%" style="vertical-align: middle;">
+						<a class="fa fa-plus-circle fa-5" style="font-size: 20px; cursor: pointer;" data-toggle="tooltip" data-html="true" th:title="增加参数" onclick="showTestCaseModal()"></a>
+						<a class="btn btn-success btn-xs" onclick="showTestCaseModal()"><i class="fa fa-edit"></i>编辑用例</a>
+					</td> -->
+				</tr>
+				</tbody>
+			</table>
+		</div>
+	</form>
+
+	<div class="row">
+		<div class="col-lg-4 text-center" style="width: 100%">
+		<shiro:hasPermission name="testmanagmt:projectPlan:edit">
+				<a class="btn btn-success btn-xs" onclick="showTestCaseModal()">
+		            <i class="fa fa-edit"></i> 编辑用例
+		        </a>
+		</shiro:hasPermission>
+			<!-- <button class="btn btn-info btn-edit system:post:edit" id="editButton" onclick="showParamsModal()" type="button" style="padding-left: 36px;padding-right: 36px;">编&nbsp;辑&nbsp;参&nbsp;数</button> -->
+		</div>
+	</div>
+
+</div>
+
+
+<div class="modal fade" id="testCaseModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+	<div class="modal-dialog" role="document"  style="width:30%">
+		<div class="modal-content" >
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">×</span>
+				</button>
+				<h4 class="modal-title" id="myParamsLabel">用例</h4>
+			</div>
+			<div class="modal-body ibox-content">
+				<div class="col-sm-12 select-table table-striped">
+					<table id="bootstrap-table" data-mobile-responsive="true" style="table-layout:fixed"></table>
+				</div>
+			</div>
+			<div class="modal-footer">
+			    <button id="params-close" type="button" class="btn btn" onclick="closetestCase()">取消</button>
+				<button id="params-save" type="button" class="btn btn-primary" onclick="addTestCases()">确定</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+
+<div th:include="include::footer"></div>
+<!-- bootstrap-suggest 下拉搜索框插件 -->
+<script th:src="@{/ajax/libs/bootstrap-suggest/bootstrap-suggest.min.js}"></script>
+<script>
+		function showTestCaseModal() {
+		$("#testCaseModal").modal('show');
+		}
+		    var planId = $("#planId").html();
+		    //console.log($("#planId").html());
+	        var prefix = ctx + "testmanagmt/projectCaseParams";
+	        var prefixadd = ctx + "testmanagmt/projectPlan";
+
+	        $(function() {
+	            var options = {
+	                url: prefixadd + "/testCaseListAll",
+	                /* createUrl: prefix + "/add",
+	                updateUrl: prefix + "/edit/{id}",
+	                removeUrl: prefix + "/remove",
+					exportUrl: prefix + "/export", */
+					showSearch: false,   // 是否显示检索信息
+                    showRefresh: false, // 是否显示刷新按钮
+                    //showColumns: $.common.visible(options.showColumns), // 是否显示隐藏某列下拉框
+                    showColumns: false,
+                    pageSize: 100, 
+                    showToggle: false, 
+	                modalName: "用例",
+					search: false,
+					pageSize: 5000,
+					pagination: false,
+					queryParams: function(params) {
+		            	return {
+		        			// 传递参数查询参数
+		                    pageSize:       params.limit,
+		                    pageNum:        params.offset / params.limit + 1,
+		                    searchValue:    params.search,
+		                    orderByColumn:  params.sort,
+		                    isAsc:          params.order,
+		                    planId:      planId
+		        		};
+					},
+			        showExport: false,
+	                columns: [{
+	                	checkbox: true,
+			            field : 'flag',
+						formatter: function (value, row, index) {
+							console.log(row);
+						        return {
+						            checked : row.flag//设置选中
+						        };
+						}
+			        },
+			        {
+						field : 'testCaseId', 
+						title : '用例ID',
+						width : '20%',
+						visible:false,
+						formatter: function (value, row, index) {
+						    　　if (value)
+						        　　return value;
+						    　　else
+						        　　return testCaseId;
+						    }
+					},
+					{
+	                    field: 'Number',
+	                    title: '序号',
+	                    width : '20%',
+	                    formatter: function (value, row, index) {
+	                        return index+1;
+	                    }
+					},
+					{
+						field : 'testCaseName', 
+						title : '用例名称',
+						//visible: false,
+						width : '40%'
+					},
+					{
+						field : 'createBy', 
+						title : '创建人',
+						class : 'myTDLengthHidden',
+						width : '40%'
+					},
+					{
+						field : 'createTime', 
+						title : '创建时间',
+						visible: false,
+						width : '20%'
+					},
+					{
+						field : 'remark', 
+						title : '备注',
+						visible: false,
+						class : 'myTDLengthHidden',
+						width : '40%'
+					}]
+	            };
+	            $.table.init(options);
+	        });
+		    
+	        
+	        
+	         /*添加选择的用例到测试计划中*/
+		   function addTestCases(){
+		    	var rows = $.map($('#bootstrap-table').bootstrapTable('getSelections'), function (row) {
+	    	        return row;
+	    	    });
+		    	var testCases = {
+		    			"planId":planId,
+		    			"row":rows
+		    	};
+		    	console.log(planId);
+		    	console.log(testCases);
+		    	var localUrl = ctx + "testmanagmt/projectPlan/editTestCase/"+planId;
+		    	
+	     		$.modal.confirm("确认保存用例到方案中吗?", function() {
+					$.operate.saveJsonUnBack1(prefixadd + "/addTestCases", JSON.stringify(testCases),localUrl);
+					$("#testCaseModal").modal('hide');
+					
+					/* setTimeout(function(){
+						location.replace(localUrl);
+					},800); */
+					//var index = parent.layer.getFrameIndex(window.name);
+			        //parent.layer.close(index);//关闭当前页
+	    		});
+	        	
+		    }
+	         
+		   function closetestCase(){
+			   $("#testCaseModal").modal('hide');
+			   
+		   }
+</script>
+</body>
+</html>

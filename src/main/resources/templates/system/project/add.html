@@ -1,0 +1,140 @@
+<!DOCTYPE HTML>
+<html  lang="zh" xmlns:th="http://www.thymeleaf.org">
+<meta charset="utf-8">
+<head th:include="include :: header"></head>
+<body class="white-bg">
+    <div class="wrapper wrapper-content animated fadeInRight ibox-content">
+        <form class="form-horizontal m" id="form-project-add" th:object="${planList}">
+			<div class="form-group">	
+				<label class="col-sm-3 control-label"><font style = "color: red;">* </font>项目名称：</label>
+				<div class="col-sm-8">
+					<input id="projectName" name="projectName" class="form-control" type="text">
+				</div>
+			</div>
+			
+<!-- 			<div class="form-group" id="plan" >
+				<label class="col-sm-3 control-label"><font style = "color: red;">* </font>选择方案：</label>	
+				<div class="col-sm-8 select-table table-striped" style="width:65%;margin-left:25%">
+					<table id="bootstrap-table" data-mobile-responsive="true" style="table-layout:fixed"></table>
+				</div>
+			</div> -->
+			
+			<div class="form-group">	
+				<label class="col-sm-3 control-label">备注：</label>
+				<div class="col-sm-8">
+					<textarea id="remark" name="remark" class="form-control" rows="8"></textarea>
+				</div>
+			</div>
+			<div class="form-group">	
+				<label class="col-sm-5 control-label">带 <font style = "color: red;">* </font> 的为必填项</label>
+			</div>
+			<!-- <div class="form-group">	
+				<label class="col-sm-3 control-label">归属部门：</label>
+				<div class="col-sm-8">
+					<input class="form-control" type="text" name="deptName" onclick="selectDeptTree()" readonly="true" id="treeName">
+				</div>
+			</div>
+			<div class="form-group">	
+				<label class="col-sm-3 control-label">项目标识：</label>
+				<div class="col-sm-8">
+					<input id="projectSign" name="projectSign" class="form-control" type="text">
+				</div>
+			</div> -->
+		</form>
+	</div>
+    <div th:include="include::footer"></div>
+    <script type="text/javascript">
+		var prefix = ctx + "system/project"
+		$("#form-project-add").validate({
+			rules:{
+				projectName:{
+					required:true,
+					minlength: 1,
+        			maxlength: 50,
+                    remote: {
+                        url: ctx + "system/project/checkProjectNameUnique",
+                        type: "post",
+                        dataType: "json",
+                        data: {
+                            name: function () {
+                                return $.common.trim($("#projectName").val());
+                            }
+                        },
+                        dataFilter: function (data, type) {
+                        	return $.validate.unique(data);
+                        }
+                    }
+				},
+			},
+	    	messages: {
+	            "projectName": {
+	                remote: "项目名称已经存在"
+	            }
+	        }
+		});
+		
+		
+        $(function() {
+            var options = {
+                url: prefix + "/planlist",
+                modalName: "项目方案",
+				search: false,
+                showSearch: false,   // 是否显示检索信息
+                showRefresh: false, // 是否显示刷新按钮
+                //showColumns: $.common.visible(options.showColumns), // 是否显示隐藏某列下拉框
+                showColumns: false,
+                showToggle: false,   // 是否显示详细视图和列表视图的切换按钮
+                pageSize: 4,
+				queryParams: function(params) {
+	            	return {
+	        			// 传递参数查询参数
+	            		pageSize:       params.limit,
+	                    pageNum:        params.offset / params.limit + 1,
+	                    searchValue:    params.search,
+	                    orderByColumn:  params.sort,
+	                    isAsc:          params.order,
+	        		};
+				},
+		        showExport: false,
+                columns: [{
+		            checkbox: true,
+		            /* field : 'flag',
+					formatter: function (value, row, index) {
+					        return {
+					            checked : row.flag//设置选中
+					        };
+					} */
+		        },
+		        {
+					field : 'planId', 
+					title : '方案ID',
+					visible:false
+				},
+				{
+					field : 'planName', 
+					title : '方案名称',
+				}]
+            };
+            $.table.init(options);
+        });
+		
+		
+		function submitHandler() {
+	        if ($.validate.form()) {
+	            $.operate.save(prefix + "/add", $('#form-project-add').serialize());
+	            console.log($('#form-project-add').serialize());
+	        }
+	    }
+
+		function doSubmit(index, layero){
+			var tree = layero.find("iframe")[0].contentWindow.$._tree;
+			if ($.tree.notAllowParents(tree)) {
+				var body = layer.getChildFrame('body', index);
+    			$("#treeId").val(body.find('#treeId').val());
+    			$("#treeName").val(body.find('#treeName').val());
+    			layer.close(index);
+			}
+		}
+	</script>
+</body>
+</html>

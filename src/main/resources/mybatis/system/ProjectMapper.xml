@@ -1,0 +1,336 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.luckyframe.project.system.project.mapper.ProjectMapper">
+    
+    <resultMap type="Project" id="ProjectResult">
+        <result property="projectId"    column="project_id"    />
+        <result property="projectName"    column="project_name"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="remark"    column="remark"    />
+        <result property="status"    column="status"    />
+    </resultMap>
+    
+    <resultMap type="ProjectEquipments" id="ProjectEquipmentsResult">
+    	<result property="id"    column="id"    />
+        <result property="projectId"    column="project_id"    />
+        <result property="equipment"    column="equipment"    />
+        <result property="model"    column="model"    />
+        <result property="productor"    column="productor"    />
+        <result property="count"    column="count"    />
+        <result property="testBy"    column="test_by"    />
+        <result property="testTime"    column="test_time"    />
+        <result property="remark"    column="remark"    />
+        
+        <result column="logo" property="logo" jdbcType="VARCHAR" />
+	    <result column="sample_grade" property="sampleGrade" jdbcType="VARCHAR" />
+	    <result column="sample_num" property="sampleNum" jdbcType="VARCHAR" />
+	    <result column="inspected_company" property="inspectedCompany" jdbcType="VARCHAR" />
+	    <result column="trust_company" property="trustCompany" jdbcType="VARCHAR" />
+	    <result column="test_location" property="testLocation" jdbcType="VARCHAR" />
+	    <result column="product_date" property="productDate" jdbcType="TIMESTAMP" />
+	    <result column="sample_basic_num" property="sampleBasicNum" jdbcType="INTEGER" />
+	    <result column="sample_descrip" property="sampleDescrip" jdbcType="VARCHAR" />
+	    <result column="test_basis" property="testBasis" jdbcType="VARCHAR" />
+	    <result column="product_adress" property="productAdress" jdbcType="VARCHAR" />
+	    <result column="trust_company_adress" property="trustCompanyAdress" jdbcType="VARCHAR" />
+	    <result column="inspected_company_adress" property="inspectedCompanyAdress" jdbcType="VARCHAR" />
+	    <result column="test_property" property="testProperty" jdbcType="VARCHAR" />
+	    <result column="temperature" property="temperature" jdbcType="VARCHAR" />
+	    <result column="humidity" property="humidity" jdbcType="VARCHAR" />
+	    <result column="sample_data" property="sampleData" jdbcType="TIMESTAMP" />
+    </resultMap>
+	
+	<resultMap id="deptResult" type="Dept">
+		<id     property="deptId"   column="dept_id"     />
+		<result property="parentId" column="parent_id"   />
+		<result property="deptName" column="dept_name"   />
+		<result property="orderNum" column="order_num"   />
+		<result property="status"   column="dept_status" />
+	</resultMap>
+	
+	<resultMap type="ProjectPlan" id="PlanForProjectResult">
+        <result property="planId"    column="plan_id"    />
+        <result property="planName"    column="plan_name"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="remark"    column="remark"    />
+        <result property="flag"    column="flag"    />
+    </resultMap>
+	
+	<sql id="selectProjectVo">
+        select p.project_id, p.project_name, p.create_by, p.create_time,p.remark,p.status from sys_project p
+    </sql>
+    
+    <sql id="selectEquipmentsVo">
+        select p.id,p.project_id, p.equipment, p.model, p.productor,p.count,p.test_by, p.test_time,p.remark, 
+        p.logo, p.sample_grade, p.sample_num, p.inspected_company, p.trust_company, p.test_location, p.product_date, 
+	    p.sample_basic_num, p.sample_descrip, p.test_basis, p.product_adress, p.trust_company_adress, 
+	    p.inspected_company_adress, p.test_property,p.temperature,p.humidity,p.sample_data
+        from project_equipment p
+    </sql>
+	
+    <select id="selectProjectList" parameterType="Project" resultMap="ProjectResult">
+        <include refid="selectProjectVo"/>
+        <where>  
+             <if test="projectName != null  and projectName != '' "> and p.project_name like concat('%', #{projectName}, '%')</if>
+             <if test="createBy != null and createBy != ''"> and p.create_by like concat('%', #{createBy}, '%')</if>
+         </where>
+          order by p.create_time desc
+    </select>
+    
+    <select id="selectProjectById" parameterType="Integer" resultMap="ProjectResult">
+        <include refid="selectProjectVo"/>
+        where p.project_id = #{projectId} 
+    </select>
+        
+    <insert id="insertProject" parameterType="Project" useGeneratedKeys="true" keyProperty="projectId">
+        insert into sys_project
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="projectName != null  and projectName != ''  ">project_name,</if>
+			<if test="createBy != null  and createBy != ''">create_by,</if>
+			<if test="remark != null  and remark != ''">remark,</if>
+			create_time,
+			status
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="projectName != null  and projectName != ''  ">#{projectName},</if>
+			<if test="createBy != null and createBy != '' ">#{createBy},</if>
+			<if test="remark != null and remark != '' ">#{createBy},</if>
+			sysdate(),
+			0
+         </trim>
+    </insert>
+	 
+    <update id="updateProject" parameterType="Project">
+        update sys_project
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="projectName != null  and projectName != ''  ">project_name = #{projectName},</if>
+            <if test="createBy != null and createBy != '' ">create_by = #{createBy},</if>
+            <if test="createTime != null  and createTime != ''  ">create_time = #{createTime},</if>
+            <if test="remark != null  and remark != ''  ">remark = #{remark},</if>
+        </trim>
+        where project_id = #{projectId}
+    </update>
+
+	<delete id="deleteProjectById" parameterType="Integer">
+        delete from sys_project where project_id = #{projectId}
+    </delete>
+	
+    <delete id="deleteProjectByIds" parameterType="String">
+        delete from sys_project where project_id in 
+        <foreach item="projectId" collection="array" open="(" separator="," close=")">
+            #{projectId}
+        </foreach>
+    </delete>
+    
+    <select id="checkProjectNameUnique" parameterType="String" resultMap="ProjectResult">
+		select * from sys_project where project_name=#{project_name}
+	</select>
+	
+
+    <select id="selectEquipmentsByProjectId" parameterType="Integer" resultMap="ProjectEquipmentsResult">
+       <include refid="selectEquipmentsVo"/>
+       where p.project_id = #{projectId}
+   	</select>
+	
+	<delete id="deleteEquipmentsByProjectId" parameterType="Integer">
+        delete from project_equipment where project_id = #{projectId}
+    </delete>
+    
+    <insert id="insertProjectEquipments" parameterType="ProjectEquipments">
+        insert into project_equipment
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="projectId != null  ">project_id,</if>
+            <if test="equipment != null  and equipment != ''  ">equipment,</if>
+            <if test="model != null  and model != ''  ">model,</if>
+            <if test="productor != null  and productor != ''  ">productor,</if>
+            
+            <if test="count != null and count != ''  ">count,</if>
+            <if test="testBy != null  and testBy != ''  ">test_by,</if>
+            <if test="testTime != null  and testTime != ''  ">test_time,</if>
+            <if test="remark != null  and remark != ''  ">remark,</if>
+            
+            <if test="logo != null  and logo != ''  ">logo,</if>
+            <if test="sampleGrade != null  and sampleGrade != ''  ">sample_grade,</if>
+            <if test="sampleNum != null  and sampleNum != ''  ">sample_num,</if>
+            <if test="inspectedCompany != null  and inspectedCompany != ''  ">inspected_company,</if>
+            <if test="trustCompany != null  and trustCompany != ''  ">trust_company,</if>
+            
+            <if test="testLocation != null  and testLocation != ''  ">test_location,</if>
+            <if test="productDate != null  and productDate != ''  ">product_date,</if>
+            <if test="sampleBasicNum != null and sampleBasicNum != '' ">sample_basic_num,</if>
+            <if test="sampleDescrip != null  and sampleDescrip != ''  ">sample_descrip,</if>
+            <if test="testBasis != null  and testBasis != ''  ">test_basis,</if>
+            <if test="productAdress != null  and productAdress != ''  ">product_adress,</if>
+            <if test="trustCompanyAdress != null  and trustCompanyAdress != ''  ">trust_company_adress,</if>
+            <if test="inspectedCompanyAdress != null  and inspectedCompanyAdress != ''  ">inspected_company_adress,</if>
+            <if test="testProperty != null  and testProperty != ''  ">test_property,</if>
+            <if test="temperature != null  and temperature != ''  ">temperature,</if>
+            <if test="humidity != null  and humidity != ''  ">humidity,</if>
+            <if test="sampleData != null  and sampleData != ''  ">sample_data,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="projectId != null  ">#{projectId},</if>
+            <if test="equipment != null  and equipment != ''  ">#{equipment},</if>
+            <if test="model != null  and model != ''  ">#{model},</if>
+            <if test="productor != null  and productor != ''  ">#{productor},</if>
+            <if test="count != null and count != '' ">#{count},</if>
+            <if test="testBy != null  and testBy != ''  ">#{testBy},</if>
+            <if test="testTime != null  and testTime != ''  ">#{testTime},</if>
+            <if test="remark != null  and remark != ''  ">#{remark},</if>
+            <if test="logo != null  and logo != ''  ">#{logo},</if>
+            
+            <if test="sampleGrade != null  and sampleGrade != ''  ">#{sampleGrade},</if>
+            <if test="sampleNum != null  and sampleNum != ''  ">#{sampleNum},</if>
+            <if test="inspectedCompany != null  and inspectedCompany != ''  ">#{inspectedCompany},</if>
+            <if test="trustCompany != null  and trustCompany != ''  ">#{trustCompany},</if>
+            
+            <if test="testLocation != null  and testLocation != ''  ">#{testLocation},</if>
+            <if test="productDate != null  and productDate != ''  ">#{productDate},</if>
+            <if test="sampleBasicNum != null  and sampleBasicNum != ''  ">#{sampleBasicNum},</if>
+            <if test="sampleDescrip != null  and sampleDescrip != ''  ">#{sampleDescrip},</if>
+            
+            <if test="testBasis != null  and testBasis != ''  ">#{testBasis},</if>
+            <if test="productAdress != null  and productAdress != ''  ">#{productAdress},</if>
+            <if test="trustCompanyAdress != null  and trustCompanyAdress != ''  ">#{trustCompanyAdress},</if>
+            <if test="inspectedCompanyAdress != null  and inspectedCompanyAdress != ''  ">#{inspectedCompanyAdress},</if>
+            
+            <if test="testProperty != null and testProperty != '' ">#{testProperty},</if>
+            <if test="temperature != null  and temperature != ''  ">#{temperature},</if>
+            <if test="humidity != null  and humidity != ''  ">#{humidity},</if>
+            <if test="sampleData != null  and sampleData != ''  ">#{sampleData},</if>
+        </trim>
+    </insert>
+    
+    <update id="updateProjectEquipments" parameterType="ProjectEquipments">
+        update project_equipment set
+            equipment = #{equipment},
+            model = #{model},
+            productor = #{productor},
+            count = #{count},
+            
+            test_by = #{testBy},
+            test_time = #{testTime},
+            remark = #{remark},
+            logo = #{logo},
+            
+            sample_grade = #{sampleGrade},
+            sample_num = #{sampleNum},
+            inspected_company = #{inspectedCompany},
+            trust_company = #{trustCompany},
+            
+            
+            test_location = #{testLocation},
+            product_date = #{productDate},
+            sample_basic_num = #{sampleBasicNum},
+            sample_descrip = #{sampleDescrip},
+            
+            test_basis = #{testBasis},
+            product_adress = #{productAdress},
+            trust_company_adress = #{trustCompanyAdress},
+            inspected_company_adress = #{inspectedCompanyAdress},
+            
+            test_property = #{testProperty},
+            temperature = #{temperature},
+            humidity = #{humidity},
+            sample_data = #{sampleData}
+        where project_id = #{projectId}
+    </update>
+
+    
+    <select id="selectProjectPlanList" parameterType="Integer" resultMap="PlanForProjectResult">
+		select pp.plan_id,pp.plan_name, IF(q.project_id is null,'false','true') flag
+		from project_plan pp  left join (select * from project_project_plan where project_id=#{projectId}) q on pp.plan_id=q.plan_id 
+	</select>
+    
+    <delete id="deletePlanByProjectId" parameterType="Integer">
+        delete from project_project_plan where project_id = #{projectId}
+    </delete>
+    
+    <insert id="insertPlan" parameterType="HashMap">
+        insert into project_project_plan
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="projectId != null  ">project_id,</if> 
+			<if test="planId != null  ">plan_id</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="projectId != null  ">#{projectId},</if>
+			<if test="planId != null  ">#{planId}</if>
+         </trim>
+    </insert>
+    
+    <select id="selectPlanList" parameterType="Integer" resultMap="PlanForProjectResult">
+		select p.plan_id,p.plan_name,p.create_by,p.create_time,p.update_by,p.update_time,p.remark 
+		from project_project_plan pp left join  project_plan p on pp.plan_id=p.plan_id 
+		where pp.project_id= #{projectId}
+	</select>
+	
+	<select id="selectProjectByMonth"  resultType="java.util.HashMap">
+		  SELECT
+				count(*) count,
+				LEFT (sp.create_time, 7) months
+			FROM
+				sys_project sp
+			WHERE
+				sp.create_time > ADDDATE(NOW(), INTERVAL - 6 MONTH)
+			GROUP BY
+				LEFT (sp.create_time, 7)
+			ORDER BY
+				months
+    </select>
+    
+    <select id="selectSuccessProjectByMonth"  resultType="java.util.HashMap">
+			SELECT
+				count(*) count,
+				LEFT (sp.create_time, 7) months
+			FROM
+				sys_project sp
+			WHERE
+				sp.create_time > ADDDATE(NOW(), INTERVAL - 6 MONTH) and sp.is_qualified =1
+			GROUP BY
+				LEFT (sp.create_time, 7)
+			ORDER BY
+				months
+    </select>
+    
+    <select id="selectFailProjectByMonth"  resultType="java.util.HashMap">
+		  SELECT
+				count(*) count,
+				LEFT (sp.create_time, 7) months
+			FROM
+				sys_project sp
+			WHERE
+				sp.create_time > ADDDATE(NOW(), INTERVAL - 6 MONTH) and sp.is_qualified =0
+			GROUP BY
+				LEFT (sp.create_time, 7)
+			ORDER BY
+				months
+    </select>
+    
+    <select id="selectPostByName"  resultType="java.util.HashMap">
+		  select sp.post_name name,count(*) value from sys_post sp GROUP BY sp.post_name
+    </select>
+    
+    <select id="selectResult" parameterType="Integer" resultType="java.util.HashMap">
+		  select project_id,is_qualified isQualified from test_result where project_id = #{projectId}
+    </select>
+    
+    <update id="saveResult" parameterType="java.util.HashMap">
+        update sys_project 
+          set  is_qualified = #{isQualified}
+        where project_id = #{projectId}
+    </update>
+    
+   	<select id="searchNewId"  resultType="java.util.HashMap">
+		  select  s.project_id projectId from sys_project  s ORDER BY  s.create_time desc  limit  1
+    </select>
+
+	<select id="selectPlanIdByProjectId" parameterType="Integer"  resultType="java.util.HashMap">
+		  select plan_id planId from project_project_plan where project_id = #{projectId}
+    </select>
+</mapper>

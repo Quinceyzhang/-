@@ -1,0 +1,149 @@
+<!DOCTYPE HTML>
+<html  lang="zh" xmlns:th="http://www.thymeleaf.org"
+xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<meta charset="utf-8">
+<head th:include="include :: header"></head>
+<body class="white-bg">
+<div class="wrapper wrapper-content animated fadeInRight ibox-content">
+	<h2 class="thin text-center" th:text="【+${project.projectName}+】方案编辑"></h2>
+	<h3 class="thin text-center" style="display:none" id="projectId" th:text="${project.projectId}"></h3>
+	<form class="form-horizontal m" id="form-projectCaseSteps-edit">
+			
+		<!-- <div class="modal-content" > -->
+			
+			<!-- <div class="modal-body ibox-content"> -->
+				<div class="col-sm-12 select-table table-striped">
+					<table id="bootstrap-table" data-mobile-responsive="true" style="table-layout:fixed"></table>
+				</div>
+			<!-- </div> -->
+			<!-- <div class="modal-footer">
+				<button id="params-save" type="button" class="btn btn-primary" onclick="addPlans()">确定</button>
+			</div> -->
+		<!-- </div> -->
+
+	</form>
+</div>
+
+<div th:include="include::footer"></div>
+<!-- bootstrap-suggest 下拉搜索框插件 -->
+<script th:src="@{/ajax/libs/bootstrap-suggest/bootstrap-suggest.min.js}"></script>
+<script>
+
+		    var projectId = $("#projectId").html();
+		    //console.log($("#postId").html());
+		    
+	        
+	        var prefix = ctx + "testmanagmt/projectCaseParams";
+	        var prefixadd = ctx + "system/project";
+	      
+	        
+	        $(function() {
+	            var options = {
+	                url: prefixadd + "/projectPlanList",
+	                /* createUrl: prefix + "/add",
+	                updateUrl: prefix + "/edit/{id}",
+	                removeUrl: prefix + "/remove",
+					exportUrl: prefix + "/export", */
+					//pagination: true,   // 是否显示分页（*）
+                    //pageNumber: 1,         // 初始化加载第一页，默认第一页
+                    pageSize: 100,          // 每页的记录行数（*
+                    showSearch: false,   // 是否显示检索信息
+                    showRefresh: false, // 是否显示刷新按钮
+                    //showColumns: $.common.visible(options.showColumns), // 是否显示隐藏某列下拉框
+                    showColumns: false,
+                    showToggle: false,   // 是否显示详细视图和列表视图的切换按钮
+	                modalName: "项目方案",
+					search: false,
+					queryParams: function(params) {
+		            	return {
+		            		pageSize:       params.limit,
+		                    pageNum:        params.offset / params.limit + 1,
+		                    searchValue:    params.search,
+		                    orderByColumn:  params.sort,
+		                    isAsc:          params.order,
+		        			// 传递参数查询参数
+		                    projectId: projectId
+		        		};
+					},
+			        showExport: false,
+	                columns: [{
+			            checkbox: true,
+			            field : 'flag',
+						formatter: function (value, row, index) {
+						        return {
+						            checked : row.flag//设置选中
+						        };
+						}
+			        },
+			        {
+	                    field: 'Number',
+	                    title: '序号',
+	                    width : '20%',
+	                    formatter: function (value, row, index) {
+	                        return index+1;
+	                    }
+					},
+			        {
+						field : 'planId', 
+						title : '方案ID',
+						width : '20%',
+						visible:false,
+						formatter: function (value, row, index) {
+						    　　if (value)
+						        　　return value;
+						    　　else
+						        　　return postId;
+						    }
+					},
+					{
+						field : 'planName', 
+						title : '方案名称',
+						class : 'myTDLengthHidden',
+						width : '40%'
+					}]
+	            };
+	            $.table.init(options);
+	        });
+		    
+	        
+	        
+	         /*添加选择的方案到项目中*/
+		   function submitHandler(){
+		    	var rows = $.map($('#bootstrap-table').bootstrapTable('getSelections'), function (row) {
+	    	        return row;
+	    	    });
+		    	var params = {
+		    			"projectId":projectId,
+		    			"row":rows
+		    	};
+		    	console.log(projectId);
+		    	console.log(params);
+		    	
+	     		$.modal.confirm("确认保存方案到项目中吗?", function() {
+	     			console.log(params);
+					$.operate.saveJsonUnBack(prefixadd + "/addPlans", JSON.stringify(params));
+					//$("#paramsModal").modal('hide');
+					var index = parent.layer.getFrameIndex(window.name);
+			        parent.layer.close(index);//关闭当前页 
+			        window.parent.location.reload();
+	    		});
+	        	
+		    }
+	         
+		 
+	
+		    
+			/*function doSubmit(index, layero){
+				var body = layer.getChildFrame('body', index);
+	   			$("#treeId").val(body.find('#treeId').val());
+	   			$("#treeName").val(body.find('#treeName').val());
+	   			layer.close(index);
+			}
+			
+			function resetForm(){
+				$("#treeId").val("");
+				$.form.reset();
+			} */
+</script>
+</body>
+</html>

@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.luckyframe.project.testmanagmt.action.mapper.ActionMapper">
+
+	<resultMap type="Action" id="ActionResult">
+		<id     property="actionId"        column="id"       />
+		<result property="actionName"      column="action"     />
+		<result property="createBy"      column="create_by"     />
+		<result property="createTime"    column="create_time"   />
+		<result property="remark"        column="remark"        />
+	</resultMap>
+	
+	<resultMap type="ActionParams" id="ActionParamsResult">
+		<result property="actionId"        column="action_id"     />
+		<result property="paramsId"      column="params_id"     />
+		<result property="paramsName"    column="params_name"     />
+		<result property="paramsUnit"    column="params_unit"     />
+		<result property="postId"      column="post_id"     />
+		<result property="postName"    column="post_name"     />
+	</resultMap>
+	
+	<sql id="selectActionParamsVo">
+        select pp.action_id,pp.params_name,pp.params_id,pp.post_name,pp.post_id,pp.params_unit
+		from action_params pp
+    </sql>
+
+	<select id="selectActionParamsList" parameterType="Integer" resultMap="ActionParamsResult">
+        <include refid="selectActionParamsVo"/>
+        where pp.action_id = #{actionId}
+    </select>
+    
+    <delete id="deleteActionParams" parameterType="Integer">
+ 		delete from action_params where action_id = #{actionId}
+ 	</delete>
+ 	
+ 	<insert id="insertActionParams" parameterType="Actionparams">
+ 		insert into action_params(
+ 			action_id,params_id,params_name,post_id,post_name,params_unit
+ 		)values(
+ 			#{actionId},#{paramsId},#{paramsName},#{postId},#{postName},#{paramsUnit}
+ 		)
+	</insert>
+	
+	<sql id="selectActionVo">
+        select a.id,a.action,a.create_by, a.create_time,a.remark 
+		from action a
+    </sql>
+	
+	<select id="selectActionList" parameterType="Action" resultMap="ActionResult">
+	    <include refid="selectActionVo"/>
+		<where>
+			<if test="actionName != null and actionName != ''">
+				AND action like concat('%', #{actionName}, '%')
+			</if>
+			<if test="createBy != null and createBy != ''">
+				AND create_by like concat('%', #{createBy}, '%')
+			</if>
+		</where>
+		order by a.create_time desc
+	</select>
+	
+	<select id="selectActionAll" resultMap="ActionResult">
+		<include refid="selectActionVo"/>
+	</select>
+	
+	
+	<select id="selectActionById" parameterType="Integer" resultMap="ActionResult">
+		<include refid="selectActionVo"/>
+		where id = #{actionId}
+	</select>
+	
+	<select id="checkActionNameUnique" parameterType="String" resultMap="ActionResult">
+		<include refid="selectActionVo"/>
+		 where action=#{actionName}
+	</select>
+	
+	
+ 	<delete id="deleteActionByIds" parameterType="String">
+ 		delete from action where id in
+ 		<foreach collection="array" item="actionId" open="(" separator="," close=")">
+ 			#{actionId}
+        </foreach> 
+ 	</delete>
+ 	
+ 	<update id="updateAction" parameterType="Action">
+ 		update action
+ 		<set>
+ 			<if test="actionName != null and actionName != ''">action = #{actionName},</if>
+ 			<if test="remark != null">remark = #{remark}</if>
+ 		</set>
+ 		where id = #{actionId}
+	</update>
+ 	
+ 	<insert id="insertAction" parameterType="Action">
+ 		insert into action(
+ 			<if test="actionName != null and actionName != ''">action,</if>
+ 			<if test="remark != null and remark != ''">remark,</if>
+ 			<if test="createBy != null and createBy != ''">create_by,</if>
+ 			create_time
+ 		)values(
+ 			<if test="actionName != null and actionName != ''">#{actionName},</if>
+ 			<if test="remark != null and remark != ''">#{remark},</if>
+ 			<if test="createBy != null and createBy != ''">#{createBy},</if>
+ 			sysdate()
+ 		)
+	</insert>
+	
+	
+	<delete id="deletePostParams" parameterType="String">
+ 		delete from action_params where action_id = #{actionId}
+ 	</delete>
+	
+	<select id="actionIsOccupy" parameterType="String" resultType="java.util.HashMap">
+    	select CAST(count(id) AS CHAR(16)) count from test_case_action  where action_id = #{actionId}
+    </select>
+
+</mapper> 

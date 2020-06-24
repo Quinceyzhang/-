@@ -1,0 +1,383 @@
+<!DOCTYPE HTML>
+<html  lang="zh" xmlns:th="http://www.thymeleaf.org"
+xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<meta charset="utf-8">
+<head th:include="include :: header"></head>
+<body class="white-bg">
+<div class="wrapper wrapper-content animated fadeInRight ibox-content">
+	<h2 class="thin text-center" th:text="【+${project.projectName}+】编辑"></h2>
+	<h3 class="thin text-center" style="display:none" id="projectId" th:text="${project.projectId}"></h3>
+	<form class="form-horizontal m" id="form-projectEquipments-edit">
+		<div class="form-group">
+			<table class="table table-striped" id="equipmentsTable">
+				<tbody id="equipmentsTBody">
+				<tr>			
+					<th width="20%"><font style = "color: red;">* </font>检测设备名称:</th>
+					<td width="30%">
+						<div class="col-sm-12 lf-td-div tooltip-show" data-toggle="tooltip" data-html="true">
+							<input type="text" class="form-control" name="equipment" th:id="equipment" th:value="${equipmentsList[0].equipment}"/>
+						</div>
+					</td>
+					<th width="20%">检测设备型号:</th>
+					<td width="30%">
+						<div class="col-sm-12 lf-td-div tooltip-show" data-toggle="tooltip" data-html="true">
+							<input type="text" class="form-control" name="model" th:id="model" th:value="${equipmentsList[0].model}"/>
+						</div>
+					</td>
+				</tr>
+					
+				<tr>
+					<th>设备生产厂家:</th>
+					<td>
+						<div class="col-sm-12 lf-td-div tooltip-show" data-toggle="tooltip" data-html="true">
+							<input type="text" class="form-control" name="productor" th:id="productor" th:value="${equipmentsList[0].productor}"/>
+						</div>
+					</td>
+					<th>检测设备数量:</th>
+					<td>
+						<div class="col-sm-12 lf-td-div tooltip-show" data-toggle="tooltip" data-html="true">
+							<input type="text" class="form-control" name="count" th:id="count" th:value="${equipmentsList[0].count}"/>
+						</div>
+					</td>
+				</tr>
+					
+				<tr>	
+					<th>检测人员:</th>
+					<td>
+						<div class="col-sm-12 lf-td-div tooltip-show" data-toggle="tooltip" data-html="true">
+							<input type="text" class="form-control" name="testBy" th:id="testBy" th:value="${equipmentsList[0].testBy}"/>
+						</div>
+					</td>
+					<th>检测时间:</th>
+					<td>
+						<div class="col-sm-12 lf-td-div tooltip-show" data-toggle="tooltip" data-html="true">
+							<input type="text" id="testTime" class="form-control" name="testTime" th:id="testTime" th:value="${equipmentsList[0].testTime}"/>
+						</div>
+					</td>
+				</tr>
+				
+				<tr>	
+					<th>商标:</th>
+					<td>
+						<div class="col-sm-12 lf-td-div tooltip-show" data-toggle="tooltip" data-html="true">
+							<input type="text" class="form-control" name="logo" th:id="logo" th:value="${equipmentsList[0].logo}"/>
+						</div>
+					</td>
+					<th>样品等级:</th>
+					<td>
+						<div class="col-sm-12 lf-td-div tooltip-show" data-toggle="tooltip" data-html="true">
+							<input type="text" class="form-control" name="sampleGrade" th:id="sampleGrade" th:value="${equipmentsList[0].sampleGrade}"/>
+						</div>
+					</td>
+				</tr>
+				
+				<tr>	
+					<th>样品编号:</th>
+					<td>
+						<div class="col-sm-12 lf-td-div tooltip-show" data-toggle="tooltip" data-html="true">
+							<input type="text" class="form-control" name="sampleNum" th:id="sampleNum" th:value="${equipmentsList[0].sampleNum}"/>
+						</div>
+					</td>
+					<th>受检单位:</th>
+					<td>
+						<div class="col-sm-12 lf-td-div tooltip-show" data-toggle="tooltip" data-html="true">
+							<input type="text" class="form-control" name="inspectedCompany" th:id="inspectedCompany" th:value="${equipmentsList[0].inspectedCompany}"/>
+						</div>
+					</td>
+				</tr>
+				
+				<tr>	
+					<th>委托单位:</th>
+					<td>
+						<div class="col-sm-12 lf-td-div tooltip-show" data-toggle="tooltip" data-html="true">
+							<input type="text" class="form-control" name="trustCompany" th:id="trustCompany" th:value="${equipmentsList[0].trustCompany}"/>
+						</div>
+					</td>
+					<th>检测地点:</th>
+					<td>
+						<div class="col-sm-12 lf-td-div tooltip-show" data-toggle="tooltip" data-html="true">
+							<input type="text" class="form-control" name="testLocation" th:id="testLocation" th:value="${equipmentsList[0].testLocation}"/>
+						</div>
+					</td>
+				</tr>
+				
+				<tr>	
+					<th>生产日期:</th>
+					<td>
+						<div class="col-sm-12 lf-td-div tooltip-show" data-toggle="tooltip" data-html="true">
+							<input id="productDate" type="text" class="form-control" name="productDate" th:id="productDate" th:value="${equipmentsList[0].productDate}"/>
+						</div>
+					</td>
+					<th>抽样基数:</th>
+					<td>
+						<div class="col-sm-12 lf-td-div tooltip-show" data-toggle="tooltip" data-html="true">
+							<input type="text" class="form-control" name="sampleBasicNum" th:id="sampleBasicNum" th:value="${equipmentsList[0].sampleBasicNum}"/>
+						</div>
+					</td>
+				</tr>
+				
+				<tr>	
+					<th>样品描述:</th>
+					<td>
+						<div class="col-sm-12 lf-td-div tooltip-show" data-toggle="tooltip" data-html="true">
+							<input type="text" class="form-control" name="sampleDescrip" th:id="sampleDescrip" th:value="${equipmentsList[0].sampleDescrip}"/>
+						</div>
+					</td>
+					<th>检验依据:</th>
+					<td>
+						<div class="col-sm-12 lf-td-div tooltip-show" data-toggle="tooltip" data-html="true">
+							<input type="text" class="form-control" name="testBasis" th:id="testBasis" th:value="${equipmentsList[0].testBasis}"/>
+						</div>
+					</td>
+				</tr>
+				
+				<tr>	
+					<th>生产厂家地址:</th>
+					<td>
+						<div class="col-sm-12 lf-td-div tooltip-show" data-toggle="tooltip" data-html="true">
+							<input type="text" class="form-control" name="productAdress" th:id="productAdress" th:value="${equipmentsList[0].productAdress}"/>
+						</div>
+					</td>
+					<th>委托单位地址:</th>
+					<td>
+						<div class="col-sm-12 lf-td-div tooltip-show" data-toggle="tooltip" data-html="true">
+							<input type="text" class="form-control" name="trustCompanyAdress" th:id="trustCompanyAdress" th:value="${equipmentsList[0].trustCompanyAdress}"/>
+						</div>
+					</td>
+				</tr>
+				
+				<tr>	
+					<th>受检单位地址:</th>
+					<td>
+						<div class="col-sm-12 lf-td-div tooltip-show" data-toggle="tooltip" data-html="true">
+							<input type="text" class="form-control" name="inspectedCompanyAdress" th:id="inspectedCompanyAdress" th:value="${equipmentsList[0].inspectedCompanyAdress}"/>
+						</div>
+					</td>
+					<th>检测性质:</th>
+					<td>
+						<div class="col-sm-12 lf-td-div tooltip-show" data-toggle="tooltip" data-html="true">
+							<input type="text" class="form-control" name="testProperty" th:id="testProperty" th:value="${equipmentsList[0].testProperty}"/>
+						</div>
+					</td>
+				</tr>
+				
+				<tr>	
+					<th>环境温度:</th>
+					<td>
+						<div class="col-sm-12 lf-td-div tooltip-show" data-toggle="tooltip" data-html="true">
+							<input type="text" class="form-control" name="temperature" th:id="temperature" th:value="${equipmentsList[0].temperature}"/>
+						</div>
+					</td>
+					<th>相对湿度:</th>
+					<td>
+						<div class="col-sm-12 lf-td-div tooltip-show" data-toggle="tooltip" data-html="true">
+							<input type="text" class="form-control" name="humidity" th:id="humidity" th:value="${equipmentsList[0].humidity}"/>
+						</div>
+					</td>
+				</tr>
+				
+				<tr>
+					<th>到样日期:</th>
+					<td>
+						<div class="col-sm-12 lf-td-div tooltip-show" data-toggle="tooltip" data-html="true">
+							<input id="sampleData" type="text"  class="form-control" name="sampleData" th:id="sampleData" th:value="${equipmentsList[0].sampleData}"/>
+						</div>
+					</td>
+					<th>备注:</th>
+					<td>
+						<div class="col-sm-12 lf-td-div tooltip-show" data-toggle="tooltip" data-html="true">
+							<input type="text" class="form-control" name="remark" th:id="remark" th:value="${equipmentsList[0].remark}"/>
+						</div>
+					</td>
+				</tr>
+				<tr>
+					<th colspan="4"><label class="col-sm-5 control-label">带 <font style = "color: red;">* </font> 的为必填项</label></th>
+				</tr>
+				</tbody>
+			</table>
+		</div>
+	</form>
+
+</div>
+<!-- expectedResult -->
+<div th:include="include::footer"></div>
+<!-- bootstrap-suggest 下拉搜索框插件 -->
+<script th:src="@{/ajax/libs/bootstrap-suggest/bootstrap-suggest.min.js}"></script>
+<script th:src="@{/js/jquery.easyui.min.js}"></script>
+<script th:src="@{/js/bootstrap-datepicker.js}"></script>
+<script th:src="@{/js/bootstrap-datepicker.zh-CN.js}"></script>
+<script type="text/javascript">
+	var prefix = ctx + "system/project";
+	let id;
+	var projectId = $("#projectId").html();
+	
+	$('#testTime').datepicker({
+	    required:true,
+	    language:"zh-CN"
+	});
+	
+	$('#productDate').datepicker({
+	    required:true,
+	    language:"zh-CN"
+	});
+	
+	$('#sampleData').datepicker({
+	    required:true,
+	    language:"zh-CN"
+	});
+
+	$("#form-projectEquipments-edit").validate({
+		/*解决错误提示不在输入框的问题*/
+		errorPlacement: function(error, element) {
+			error.appendTo(element.parent());
+		},
+		rules:{
+			equipment:{
+				maxlength: 50,
+				required: true
+			},
+			model:{
+				maxlength: 100
+			},
+			productor:{
+				maxlength: 50
+			},
+			count:{
+				digits:true,
+				maxlength: 50
+			},
+			testBy:{
+				maxlength: 50
+			},
+			testTime:{
+				maxlength: 50
+			},
+			remark:{
+				maxlength: 500
+			},
+			logo:{
+				maxlength: 50
+			},
+			sampleGrade:{
+				maxlength: 16
+			},
+			sampleNum:{
+				maxlength: 50
+			},
+			inspectedCompany:{
+				maxlength: 500
+			},
+			trustCompany:{
+				maxlength: 500
+			},
+			
+			testLocation:{
+				maxlength: 50
+			},
+			sampleBasicNum:{
+				digits:true,
+				maxlength: 16
+			},
+			sampleDescrip:{
+				maxlength: 200
+			},
+			testBasis:{
+				maxlength: 50
+			},
+			productAdress:{
+				maxlength: 100
+			},
+			trustCompanyAdress:{
+				maxlength: 100
+			},
+			inspectedCompanyAdress:{
+				maxlength: 100
+			},
+			testProperty:{
+				maxlength: 64
+			},
+			temperature:{
+				maxlength: 32
+			},
+			humidity:{
+				maxlength: 32
+			}
+		},
+		messages: {
+			"equipment": {
+				required: "【设备名称】必填"
+			}
+		}
+	});
+
+	function submitHandler() {
+		if ($.validate.form()) {
+			//点击提交按钮时,表单序列化后组装JSONARR
+			var values = {
+					projectId:      		projectId,
+					equipment:				$('#equipment').val(),
+					model:	    			$('#model').val(),
+					productor:  			$('#productor').val(),
+					count:      			$('#count').val(),
+					testBy:     			$('#testBy').val(),
+					testTime:   			$('#testTime').val(),
+					remark:     			$('#remark').val(),
+					logo:       			$('#logo').val(),
+					sampleGrade:			$('#sampleGrade').val(),
+					sampleNum:     			$('#sampleNum').val(),
+					inspectedCompany:     	$('#inspectedCompany').val(),
+					trustCompany:     		$('#trustCompany').val(),
+					testLocation:     		$('#testLocation').val(),
+					productDate:     		$('#productDate').val(),
+					sampleBasicNum:     	$('#sampleBasicNum').val(),
+					sampleDescrip:     		$('#sampleDescrip').val(),
+					testBasis:     			$('#testBasis').val(),
+					productAdress:     		$('#productAdress').val(),
+					trustCompanyAdress:     $('#trustCompanyAdress').val(),
+					inspectedCompanyAdress: $('#inspectedCompanyAdress').val(),
+					testProperty:     		$('#testProperty').val(),
+					temperature:     		$('#temperature').val(),
+					humidity:     			$('#humidity').val(),
+					sampleData:     		$('#sampleData').val()
+			};
+	
+			console.log(values);
+			
+			
+ 			var url=prefix + "/editEquipmentSave";
+			var localUrl=prefix+ "/editEquipment/" + projectId;
+			$.ajax({
+				url: url,
+				type: "post",
+				dataType: "json",
+				contentType:"application/json",
+				data: JSON.stringify(values),
+				beforeSend: function () {
+					$.modal.loading("正在处理中，请稍后...");
+					$.modal.disable();
+				},
+				success: function(result) {
+					if (result.code == web_status.SUCCESS) {
+						$.modal.msgSuccess("保存设备成功");
+						setTimeout(function(){
+							location.replace(localUrl);
+						},800);
+						var index = parent.layer.getFrameIndex(window.name);
+				        parent.layer.close(index);//关闭当前页 
+					} else {
+						$.modal.alertError(result.msg);
+					}
+					$.modal.enable();
+					$.modal.closeLoading();
+					window.parent.location.reload();
+
+				}
+			});
+			//$.operate.saveJsonUnBack(prefix + "/editSave", JSON.stringify(values));
+		} else {
+			$.modal.msgError("设备提交验证不通过！");
+		}
+	}
+</script>
+</body>
+</html>

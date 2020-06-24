@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.luckyframe.project.testmanagmt.projectPlan.mapper.ProjectPlanMapper">
+    
+    <resultMap type="ProjectPlan" id="ProjectPlanResult">
+        <result property="planId"    column="plan_id"    />
+        <result property="planName"    column="plan_name"    />
+       <!--  <result property="planCaseCount"    column="plan_case_count"    /> -->
+       <!--  <result property="projectId"    column="project_id"    /> -->
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="remark"    column="remark"    />
+        <!-- <association property="project"  column="project_id" javaType="Project" resultMap="ProjectResult" /> -->
+    </resultMap>
+    
+    <resultMap type="TestCase" id="TestCaseResult">
+		<id     property="testCaseId"        column="testcaseid"       />
+		<result property="testCaseName"      column="testcasename"     />
+		<result property="createBy"      column="createby"     />
+		<result property="createTime"    column="createtime"   />
+		<result property="updateBy"      column="updateby"     />
+		<result property="updateTime"    column="updatetime"   />
+		<result property="remark"        column="remark"        />
+		<result property="flag"      column="flag"     />
+	</resultMap>
+	
+	<resultMap type="TestCaseTime" id="TestCaseTimeResult">
+		<id     property="testCaseId"        column="testcaseid"       />
+		<result property="testCaseName"      column="testcasename"     />
+		<result property="createBy"    column="createby"   />
+		<result property="createTime"    column="createtime"   />
+		<result property="remark"        column="remark"        />
+	</resultMap>
+    
+    <resultMap type="Project" id="ProjectResult">
+        <id property="projectId"    column="project_id"    />
+        <result property="projectName"    column="project_name"    />
+    </resultMap>
+	
+	<sql id="selectProjectPlanVo">
+        select pp.plan_id, pp.plan_name, pp.create_by, pp.create_time, pp.update_by, pp.update_time, pp.remark
+        from project_plan pp 
+    </sql>
+	
+    <select id="selectProjectPlanList" parameterType="ProjectPlan" resultMap="ProjectPlanResult">
+        <include refid="selectProjectPlanVo"/>
+        <where>  
+            <if test="planId != null "> and pp.plan_id = #{planId}</if>
+             <if test="planName != null  and planName != '' "> and pp.plan_name like concat('%', #{planName}, '%')</if>
+             <!-- <if test="planCaseCount != null "> and pp.plan_case_count = #{planCaseCount}</if>
+             <if test="projectId != null "> and pp.project_id = #{projectId}</if> -->
+             <if test="createBy != null  and createBy != '' "> and pp.create_by = #{createBy}</if>
+             <if test="createTime != null "> and pp.create_time = #{createTime}</if>
+             <if test="updateBy != null  and updateBy != '' "> and pp.update_by = #{updateBy}</if>
+             <if test="updateTime != null "> and pp.update_time = #{updateTime}</if>
+             <if test="remark != null  and remark != '' "> and pp.remark = #{remark}</if>
+         </where>
+         order by pp.create_time desc
+    </select>
+    
+    <select id="selectProjectPlanById" parameterType="Integer" resultMap="ProjectPlanResult">
+        <include refid="selectProjectPlanVo"/>
+        where pp.plan_id = #{planId}
+    </select>
+    
+    <select id="selectProjectPlanByPlanName" parameterType="String" resultMap="ProjectPlanResult">
+        <include refid="selectProjectPlanVo"/>
+        where pp.plan_name = #{planName}
+    </select>
+    
+    <select id="checkProjectPlanNameUnique" parameterType="String" resultMap="ProjectPlanResult">
+        <include refid="selectProjectPlanVo"/>
+		where pp.plan_name=#{plan_name}
+	</select>
+        
+    <insert id="insertProjectPlan" parameterType="ProjectPlan" useGeneratedKeys="true" keyProperty="planId">
+        insert into project_plan
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="planName != null  and planName != ''  ">plan_name,</if>
+			<!-- <if test="planCaseCount != null  ">plan_case_count,</if>
+			<if test="projectId != null  ">project_id,</if> -->
+			<if test="createBy != null  and createBy != ''  ">create_by,</if>
+			<if test="createTime != null  ">create_time,</if>
+			<if test="updateBy != null  and updateBy != ''  ">update_by,</if>
+			<if test="updateTime != null  ">update_time,</if>
+			<if test="remark != null  and remark != ''  ">remark,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="planName != null  and planName != ''  ">#{planName},</if>
+			<!-- <if test="planCaseCount != null  ">#{planCaseCount},</if>
+			<if test="projectId != null  ">#{projectId},</if> -->
+			<if test="createBy != null  and createBy != ''  ">#{createBy},</if>
+			<if test="createTime != null  ">#{createTime},</if>
+			<if test="updateBy != null  and updateBy != ''  ">#{updateBy},</if>
+			<if test="updateTime != null  ">#{updateTime},</if>
+			<if test="remark != null  and remark != ''  ">#{remark},</if>
+         </trim>
+    </insert>
+	 
+    <update id="updateProjectPlan" parameterType="ProjectPlan">
+        update project_plan
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="planName != null  and planName != ''  ">plan_name = #{planName},</if>
+            <!-- <if test="planCaseCount != null  ">plan_case_count = #{planCaseCount},</if>
+            <if test="projectId != null  ">project_id = #{projectId},</if> -->
+            <if test="createBy != null  and createBy != ''  ">create_by = #{createBy},</if>
+            <if test="createTime != null  ">create_time = #{createTime},</if>
+            <if test="updateBy != null  and updateBy != ''  ">update_by = #{updateBy},</if>
+            <if test="updateTime != null  ">update_time = #{updateTime},</if>
+            <if test="remark != null ">remark = #{remark},</if>
+        </trim>
+        where plan_id = #{planId}
+    </update>
+
+	<delete id="deleteProjectPlanById" parameterType="Integer">
+        delete from project_plan where plan_id = #{planId}
+    </delete>
+	
+    <delete id="deleteProjectPlanByIds" parameterType="String">
+        delete from project_plan where plan_id in 
+        <foreach item="planId" collection="array" open="(" separator="," close=")">
+            #{planId}
+        </foreach>
+    </delete>
+    
+    <select id="selectTestCaseByPlanId" parameterType="Integer" resultMap="TestCaseTimeResult">
+        select tc.testcaseid,tc.testcasename,tc.createBy,tc.createTime,tc.remark
+        from plan_testcase pt left join test_case tc on pt.testcase_id = tc.testcaseid
+        where pt.plan_id = #{planId}
+    </select>
+    
+    <delete id="deleteTestCaseByPlanId" parameterType="Long">
+        delete from plan_testcase where plan_id = #{planId}
+    </delete>
+    
+    <insert id="insertTestCase" parameterType="HashMap">
+        insert into plan_testcase
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="planId != null  ">plan_id,</if> 
+			<if test="testCaseId != null  ">testcase_id</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="planId != null  ">#{planId},</if>
+			<if test="testCaseId != null  ">#{testCaseId}</if>
+         </trim>
+    </insert>
+    
+    <select id="selectTestCaseForPlan" parameterType="Long" resultMap="TestCaseResult">
+        select p.testcaseid,p.testcasename,p.createBy,p.createTime,p.remark, IF(q.plan_id is null,'false','true') flag
+	    from test_case p
+	    left join (select * from  plan_testcase where plan_id = #{planId}) q on p.testcaseid = q.testcase_id
+    </select>
+    
+    
+    <select id="planIsOccupy" parameterType="String" resultType="java.util.HashMap">
+    	select CAST(count(id) AS CHAR(16)) count from project_project_plan  where plan_id = #{planId}
+    </select>
+</mapper>

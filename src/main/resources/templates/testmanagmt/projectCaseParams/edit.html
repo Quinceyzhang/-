@@ -1,0 +1,128 @@
+<!DOCTYPE HTML>
+<html  lang="zh" xmlns:th="http://www.thymeleaf.org">
+<meta charset="utf-8">
+<head th:include="include :: header"></head>
+<body class="white-bg">
+    <div class="wrapper wrapper-content animated fadeInRight ibox-content">
+        <form class="form-horizontal m" id="form-projectCaseParams-edit" th:object="${projectCaseParams}">
+            <input id="paramsId" name="paramsId" th:field="*{paramsId}"  type="hidden">
+			<div class="form-group">	
+				<label class="col-sm-3 control-label"><font style = "color: red;">* </font> 参数名称：</label>
+				<div class="col-sm-8">
+					<input id="paramsName" name="paramsName" th:field="*{paramsName}" class="form-control" type="text">
+				</div>
+			</div>
+			
+			<div class="form-group" id="type" style="display:none">	
+				<label class="col-sm-3 control-label"><font style = "color: red;">* </font> 参数类型：</label>
+				<div class="col-sm-8">
+					<input id="paramsType" name="paramsType" th:field="*{type}" class="form-control" type="text">
+				</div>
+			</div>
+			
+			<div class="form-group" id="value" style="display:none">	
+				<label class="col-sm-3 control-label"><font style = "color: red;">* </font> 参数值：</label>
+				<div class="col-sm-8">
+					<input id="paramsValue" name="paramsValue" th:field="*{paramsValue}"  class="form-control" type="text">
+				</div>
+			</div>
+			
+			<div class="form-group" id="minValue" style="display:block">	
+				<label class="col-sm-3 control-label">参数最小值：</label>
+				<div class="col-sm-8">
+					<input id="paramsMinValue" name="paramsMinValue" th:field="*{paramsMinValue}" class="form-control" type="text">
+				</div>
+			</div>
+			<div class="form-group" id="maxValue" style="display:block">	
+				<label class="col-sm-3 control-label">参数最大值：</label>
+				<div class="col-sm-8">
+					<input id="paramsMaxValue" name="paramsMaxValue" th:field="*{paramsMaxValue}" class="form-control" type="text">
+				</div>
+			</div>
+			<div class="form-group">	
+				<label class="col-sm-3 control-label">参数单位：</label>
+				<div class="col-sm-8">
+					<input id="paramsUnit" name="paramsUnit" th:field="*{paramsUnit}" class="form-control" type="text">
+				</div>
+			</div>
+			<div class="form-group">	
+				<label class="col-sm-3 control-label">备注：</label>
+				<div class="col-sm-8">
+					<textarea id="remark" name="remark" th:field="*{remark}" class="form-control" rows="8"></textarea>
+				</div>
+			</div>
+			<div class="form-group">	
+				<label class="col-sm-5 control-label">带 <font style = "color: red;">* </font> 的为必填项</label>
+			</div>
+		</form>
+    </div>
+    <div th:include="include::footer"></div>
+    <script type="text/javascript">
+		var prefix = ctx + "testmanagmt/projectCaseParams";
+		
+		$.validator.setDefaults({
+			ignore:":hidden:not(select)",
+			submitHandler : function() {
+				save();
+			}
+		});
+		
+		$(function() {
+			var vs = $('#paramsType').val();
+			if(vs==1){
+				 $("#maxValue").css('display','none');
+				 $("#minValue").css('display','none');
+				 
+				 $("#paramsValue").val($("#paramsMinValue").val());
+				 $("#value").css('display','block');
+			 }
+		})
+		
+		$("#form-projectCaseParams-edit").validate({
+			rules:{
+				paramsName:{
+					required:true,
+        			maxlength: 50
+				},
+				paramsValue:{
+					maxlength:20
+				},
+				paramsMinValue:{
+					number:true,
+					maxlength:20
+				},
+				paramsMaxValue:{
+					number:true,
+					maxlength:20
+				},
+				paramsUnit:{
+					maxlength:50
+				},
+				remark:{
+					maxlength:200
+				}
+			}
+		});
+		
+		/*重新初始化表单验证*/
+		function resetValidateForm() {
+			$.validate.resetForm();
+			$.validate.form();
+		}
+		
+		function submitHandler() {
+			
+			var vs = $('#paramsType').val();
+			if(vs==1){
+				$("#paramsMinValue").val($("#paramsValue").val());
+				$("#paramsMaxValue").val($("#paramsValue").val());
+			}
+			
+	        if ($.validate.form()) {
+	            $.operate.save(prefix + "/edit", $('#form-projectCaseParams-edit').serialize());
+	            console.log($('#form-projectCaseParams-edit').serialize());
+	        }
+	    }
+	</script>
+</body>
+</html>

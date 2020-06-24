@@ -1,0 +1,382 @@
+<!DOCTYPE HTML>
+<html  lang="zh" xmlns:th="http://www.thymeleaf.org"
+xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<meta charset="utf-8">
+<head th:include="include :: header"></head>
+<body class="white-bg">
+<div class="wrapper wrapper-content animated fadeInRight ibox-content">
+	<h2 class="thin text-center" th:text="${post.postName}+【+${post.postCode}+】参数编辑"></h2>
+	<h3 class="thin text-center" style="display:none" id="postId" th:text="${post.postId}"></h3>
+	<form class="form-horizontal m" id="form-projectCaseSteps-edit">
+		<div class="form-group">
+			<table class="table table-striped" id="stepsTable">
+				<thead>
+				<tr style="text-align: center;">
+				    <!-- <th>仪器编号</th>
+					<th>仪器名称</th> -->
+					<!-- <th>参数ID</th> -->
+					<th>序号</th>
+					<th>参数</th>
+					<th>参数单位</th>
+					<th>最小值</th>
+					<th>最大值</th>
+					<th>备注</th>
+					<!-- <th>删除</th> -->
+				</tr>
+				</thead>
+				<tbody id="stepsTBody">
+				<tr th:each="stepsOb,iterStat : ${postParamsList}">
+					<!-- <td width="5%">
+						<div class="col-sm-12 lf-td-div">
+							<label th:name="postNumber"  th:value="${stepsOb.postId}" th:text="${stepsOb.postId}"></label>
+						</div>
+					</td>
+					<td width="15%">
+						<div class="col-sm-12 lf-td-div">
+							<label th:name="postName"  th:value="${post.postName}" th:text="${post.postName}"></label>
+						</div>
+					</td> -->
+					<!-- <td width="15%">
+						<div class="col-sm-12 lf-td-div">
+							<label th:name="paramsId"  th:value="${stepsOb.paramsId}" th:text="${stepsOb.paramsId}"></label>
+						</div>
+					</td> -->
+					<td width="5%">
+						<div class="col-sm-12 lf-td-div">
+							<label th:name="xuhao"  th:value="${iterStat.count}" th:text="${iterStat.count}"></label>
+						</div>
+					</td>
+					<td width="20%">
+						<div class="col-sm-12 lf-td-div">
+							<label th:name="paramsName"  th:value="${stepsOb.paramsName}" th:text="${stepsOb.paramsName}"></label>
+						</div>
+					</td>
+					<td width="20%">
+						<div class="col-sm-12 lf-td-div">
+							<label th:name="paramsUnit"  th:value="${stepsOb.paramsUnit}" th:text="${stepsOb.paramsUnit}"></label>
+						</div>
+					</td>
+					<td width="20%">
+						<div class="col-sm-12 lf-td-div">
+							<label th:name="paramsMinValue"  th:value="${stepsOb.paramsMinValue}" th:text="${stepsOb.paramsMinValue}"></label>
+						</div>
+					</td>
+					<td width="15">
+						<div class="col-sm-12 lf-td-div">
+							<label th:name="paramsMaxValue"  th:value="${stepsOb.paramsMaxValue}" th:text="${stepsOb.paramsMaxValue}"></label>
+						</div>
+					</td>
+					<td width="20%">
+						<div class="col-sm-12 lf-td-div">
+							<label th:name="remark"  th:value="${stepsOb.remark}" th:text="${stepsOb.remark}"></label>
+						</div>
+					</td>
+					<!-- <td width="5%" style="vertical-align: middle;">
+						<a class="fa fa-minus-circle fa-5" style="font-size: 20px; cursor: pointer;" data-toggle="tooltip" data-html="true" th:title="删除" onclick="delParams()"></a>
+					</td> -->
+				</tr>
+				</tbody>
+			</table>
+		</div>
+	</form>
+
+	<div class="row">
+		<div class="col-lg-4 text-center" style="width: 100%">
+		<shiro:hasPermission name="system:post:edit">
+				<a class="btn btn-success btn-xs" onclick="showParamsModal()">
+		            <i class="fa fa-edit"></i> 编辑参数
+		        </a>
+		</shiro:hasPermission>
+			<!-- <button class="btn btn-info btn-edit system:post:edit" id="editButton" onclick="showParamsModal()" type="button" style="padding-left: 36px;padding-right: 36px;">编&nbsp;辑&nbsp;参&nbsp;数</button> -->
+		</div>
+	</div>
+
+</div>
+
+
+
+<div class="modal fade" id="paramsModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+	<div class="modal-dialog" role="document"  style="width:30%">
+		<div class="modal-content" >
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">×</span>
+				</button>
+				<h4 class="modal-title" id="myParamsLabel">参数</h4>
+			</div>
+			<div class="modal-body ibox-content">
+				<div class="col-sm-12 select-table table-striped">
+					<table id="bootstrap-table" data-mobile-responsive="true" style="table-layout:fixed"></table>
+				</div>
+			</div>
+			<div class="modal-footer">
+				<button id="params-save" type="button" class="btn btn-primary" onclick="addParams()">确定</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+
+
+
+<div th:include="include::footer"></div>
+<!-- bootstrap-suggest 下拉搜索框插件 -->
+<script th:src="@{/ajax/libs/bootstrap-suggest/bootstrap-suggest.min.js}"></script>
+<script>
+		function showParamsModal() {
+		$("#paramsModal").modal('show');
+	}
+		    var postId = $("#postId").html();
+		    //console.log($("#postId").html());
+		    
+	        
+	        //${postParamsList[0].postId}
+	        var prefix = ctx + "testmanagmt/projectCaseParams";
+	        var prefixadd = ctx + "system/post";
+	        /* var prefix = ctx + "system/post";
+	        var modulePrefix = ctx + "testmanagmt/projectCaseModule"; */
+	        
+	        $(function() {
+	            var options = {
+	                url: prefixadd + "/paramsForPostlist",
+	                /* createUrl: prefix + "/add",
+	                updateUrl: prefix + "/edit/{id}",
+	                removeUrl: prefix + "/remove",
+					exportUrl: prefix + "/export", */
+					//pagination: true,   // 是否显示分页（*）
+                    //pageNumber: 1,         // 初始化加载第一页，默认第一页
+                    showSearch: false,   // 是否显示检索信息
+                    showRefresh: false, // 是否显示刷新按钮
+                    //showColumns: $.common.visible(options.showColumns), // 是否显示隐藏某列下拉框
+                    showColumns: false,
+                    showToggle: false, 
+                    pageSize: 5000,
+    				pagination: false,
+	                modalName: "用例公共参数",
+					search: false,
+					queryParams: function(params) {
+		            	return {
+		            		pageSize:       params.limit,
+		                    pageNum:        params.offset / params.limit + 1,
+		                    searchValue:    params.search,
+		                    orderByColumn:  params.sort,
+		                    isAsc:          params.order,
+		        			// 传递参数查询参数
+		                    postId: postId
+		        		};
+					},
+			        showExport: false,
+	                columns: [{
+			            checkbox: true,
+			            field : 'flag',
+			             formatter : function(i, row) { // 每次加载 checkbox 时判断当前 row 的 id 是否已经存在全局 Set() 里
+							if (($.inArray(row.paramsId,
+									overAllIds) != -1) || row.flag) {// 因为 判断数组里有没有这个 id 
+								return {
+									checked : true
+								// 存在则选中
+								}
+							}
+						}
+			        },
+			        {
+						field : 'postId', 
+						title : '仪器ID',
+						width : '20%',
+						visible:false,
+						formatter: function (value, row, index) {
+						    　　if (value)
+						        　　return value;
+						    　　else
+						        　　return postId;
+						    }
+					},
+					{
+	                    field: 'Number',
+	                    title: '序号',
+	                    width : '20%',
+	                    formatter: function (value, row, index) {
+	                        return index+1;
+	                    }
+					},
+					{
+						field : 'paramsId', 
+						title : '参数ID',
+						visible:false,
+						width : '20%'
+					},
+					{
+						field : 'paramsName', 
+						title : '参数名称',
+						class : 'myTDLengthHidden',
+						width : '40%'
+					},
+					/* {
+						field : 'paramsMinValue', 
+						title : '最小值',
+						class : 'myTDLengthHidden',
+						editable : {
+							type : 'text',
+							title : '参数最小值',
+							emptytext : "【参数最小值】为空",
+							validate : function(value) {
+								if (value.length > 500)
+									return '参数最小值不能超过500个字符';
+								if (value.length == 0)
+									return '参数最小值不能为空';
+							}
+						}
+					},
+					{
+						field : 'paramsMaxValue', 
+						title : '最大值',
+						class : 'myTDLengthHidden',
+						editable : {
+							type : 'text',
+							title : '参数最大值',
+							emptytext : "【参数最大值】为空",
+							validate : function(value) {
+								if (value.length > 500)
+									return '参数最大值不能超过500个字符';
+								if (value.length == 0)
+									return '参数最大值不能为空';
+							}
+						}
+					}, */
+					{
+						field : 'paramsUnit', 
+						title : '参数单位',
+						width : '40%',
+						class : 'myTDLengthHidden',
+						
+					}]
+	            };
+	            $.table.init(options);
+	        });
+		    
+	        
+	        
+	         /*添加选择的用例到测试计划中*/
+		   function addParams(){
+		    	var rows = $.map($('#bootstrap-table').bootstrapTable('getSelections'), function (row) {
+	    	        return row;
+	    	    });
+		    	var params = {
+		    			"postId":postId,
+		    			"row":rows
+		    	};
+		    	console.log(postId);
+		    	console.log(params);
+		    	
+		    	var localUrl = ctx + "system/post/editParams/"+postId;
+		    	
+	     		$.modal.confirm("确认保存参数到仪器中吗?", function() {
+	     			var params = {
+			    			"postId":postId,
+			    			"row":overAll
+			    	};
+	     			console.log(params);
+					$.operate.saveJsonUnBack1(prefixadd + "/addParams", JSON.stringify(params),localUrl);
+					$("#paramsModal").modal('hide');
+					
+					
+					/* setTimeout(function(){
+						location.replace(localUrl);
+					},800); */
+					//var index = parent.layer.getFrameIndex(window.name);
+			        //parent.layer.close(index);//关闭当前页 
+	    		});
+	        	
+		    }
+	         
+		   function delParams(){
+			   console.log();
+		   }
+		    /*添加项目中所有的用例到测试计划中*/
+		    /* function submitHandlerAll(){
+	     		$.modal.confirm("确认保存查询用例集合到计划中吗?", function() {
+	            	var config = {
+	            	        url: prefix + "/savePlanAllCase",
+	            	        type: "post",
+	            	        dataType: "json",
+	            	        data: $('#formId').serialize(),
+	            	        beforeSend: function () {
+	            	        	$.modal.loading("正在处理中，请稍后...");
+	            	        	$.modal.disable();
+	            	        },
+	            	        success: function(result) {
+	                        	if (result.code == web_status.SUCCESS) {
+	                            	$.modal.msgSuccess(result.msg);
+	                        		$.table.refresh();
+	                            } else {
+	                            	$.modal.alertError(result.msg);
+	                            }
+	                            $.modal.enable();
+	                            $.modal.closeLoading();
+	            	        }
+	            	    };
+	            	  $.ajax(config);
+	    		});
+	        	
+		    } */
+		    
+			/*查询条件选择用例模块*/
+			/* function selectModuleTree() {
+				var projectId=$("#projectId").val();
+				var moduleId=$("#treeId").val();
+				if(projectId==""){
+					$.modal.alertError("未检查到计划项目");
+				}else{
+					if(moduleId==""){
+						moduleId=projectId;
+					}
+					var options = {
+							title: '模块选择',
+							width: "380",
+							url: modulePrefix + "/selectProjectCaseModuleTree/" + moduleId,
+							callBack: doSubmit
+						};
+						$.modal.openOptions(options);
+				}
+			}
+			
+			function doSubmit(index, layero){
+				var body = layer.getChildFrame('body', index);
+	   			$("#treeId").val(body.find('#treeId').val());
+	   			$("#treeName").val(body.find('#treeName').val());
+	   			layer.close(index);
+			}
+			
+			function resetForm(){
+				$("#treeId").val("");
+				$.form.reset();
+			} */
+			var overAllIds = new Array(); //全局数组
+			var overAll = new Array(); //全局数组
+			function examine(type, datas) {
+				if (type.indexOf('uncheck') == -1) {
+					$.each(datas,
+							function(i, v) {
+								// 添加时，判断一行或多行的 id 是否已经在数组里 不存则添加　
+								overAll.indexOf(v) == -1 ? overAll
+										.push(v) : -1;
+										overAllIds.indexOf(v.paramsId) == -1 ? overAllIds
+												.push(v.paramsId) : -1;
+							});
+				} else {
+					$.each(datas, function(i, v) {
+						overAll.splice(overAll.indexOf(v), 1); //删除取消选中行
+						overAllIds.splice(overAllIds.indexOf(v.paramsId), 1); //删除取消选中行
+					});
+				}
+			}
+			$('#bootstrap-table')
+					.on(
+							'uncheck.bs.table check.bs.table check-all.bs.table uncheck-all.bs.table',
+							function(e, rows) {
+								var datas = $.isArray(rows) ? rows : [ rows ]; // 点击时获取选中的行或取消选中的行
+								examine(e.type, datas); // 保存到全局 Array() 里
+							});
+</script>
+</body>
+</html>

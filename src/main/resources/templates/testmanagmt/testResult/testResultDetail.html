@@ -1,0 +1,389 @@
+<!DOCTYPE HTML>
+<html  lang="zh" xmlns:th="http://www.thymeleaf.org"
+xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<meta charset="utf-8">
+<head th:include="include :: header"></head>
+<body class="white-bg">
+<div class="wrapper wrapper-content animated fadeInRight ibox-content">
+	<h2 class="thin text-center" th:text="【+${project.projectName}+】测试报告"></h2>
+	<h3 class="thin text-center" style="display:none" id="projectId" th:text="${project.projectId}"></h3>
+	<form class="form-horizontal m" id="form-projectEquipments-edit">
+		<div class="form-group">
+			<table class="table table-striped" id="equipmentsTable">
+				<tbody id="equipmentsTBody">
+					<tr>
+						<th width="10%">设备:</th>
+						<td width="15%">
+							<div class="col-sm-12 lf-td-div tooltip-show" data-toggle="tooltip" data-html="true">
+								<input readonly="readonly" type="text" class="form-control" name="equipment" th:id="equipment" th:value="${equipmentlist[0].equipment}"/>
+							</div>
+						</td>
+						<th width="10%">商标:</th>
+						<td width="15%">
+							<div class="col-sm-12 lf-td-div tooltip-show" data-toggle="tooltip" data-html="true">
+								<input readonly="readonly" type="text" class="form-control" name="logo" th:id="logo" th:value="${equipmentlist[0].logo}"/>
+							</div>
+						</td>
+						<th width="10%">编号:</th>
+						<td width="15%">
+							<div class="col-sm-12 lf-td-div tooltip-show" data-toggle="tooltip" data-html="true">
+								<input readonly="readonly" type="text" class="form-control" name="sampleNum" th:id="sampleNum" th:value="${equipmentlist[0].sampleNum}"/>
+							</div>
+						</td>
+						<th width="10%">型号:</th>
+						<td width="15%">
+							<div class="col-sm-12 lf-td-div tooltip-show" data-toggle="tooltip" data-html="true">
+								<input readonly="readonly" type="text" class="form-control" name="model" th:id="model" th:value="${equipmentlist[0].model}"/>
+							</div>
+						</td>
+					</tr>
+					
+					<tr>
+						<th width="10%">样品数量:</th>
+						<td width="15%">
+							<div class="col-sm-12 lf-td-div tooltip-show" data-toggle="tooltip" data-html="true">
+								<input readonly="readonly" type="text" class="form-control" name="count" th:id="count" th:value="${equipmentlist[0].count}"/>
+							</div>
+						</td>
+						<th width="10%">抽样基数:</th>
+						<td width="15%">
+							<div class="col-sm-12 lf-td-div tooltip-show" data-toggle="tooltip" data-html="true">
+								<input readonly="readonly" type="text" class="form-control" name="sampleBasicNum" th:id="sampleBasicNum" th:value="${equipmentlist[0].sampleBasicNum}"/>
+							</div>
+						</td>
+						<th width="10%">样品描述:</th>
+						<td width="15%">
+							<div class="col-sm-12 lf-td-div tooltip-show" data-toggle="tooltip" data-html="true">
+								<input readonly="readonly" type="text" class="form-control" name="sampleDescrip" th:id="sampleDescrip" th:value="${equipmentlist[0].sampleDescrip}"/>
+							</div>
+						</td>
+						<th width="10%">样品等级:</th>
+						<td width="15%">
+							<div class="col-sm-12 lf-td-div tooltip-show" data-toggle="tooltip" data-html="true">
+								<input readonly="readonly" type="text" class="form-control" name="sampleGrade" th:id="sampleGrade" th:value="${equipmentlist[0].sampleGrade}"/>
+							</div>
+						</td>
+					</tr>
+					
+					<tr>
+						<th width="10%">检测地点:</th>
+						<td width="15%">
+							<div class="col-sm-12 lf-td-div tooltip-show" data-toggle="tooltip" data-html="true">
+								<input readonly="readonly" type="text" class="form-control" name="testLocation" th:id="testLocation" th:value="${equipmentlist[0].testLocation}"/>
+							</div>
+						</td>
+						<th width="10%">检测人员:</th>
+						<td width="15%">
+							<div class="col-sm-12 lf-td-div tooltip-show" data-toggle="tooltip" data-html="true">
+								<input readonly="readonly" type="text" class="form-control" name="testBy" th:id="testBy" th:value="${equipmentlist[0].testBy}"/>
+							</div>
+						</td>
+						<th width="10%">检测时间:</th>
+						<td width="15%">
+							<div class="col-sm-12 lf-td-div tooltip-show" data-toggle="tooltip" data-html="true">
+								<input readonly="readonly" type="text" class="form-control" name="testTime" th:id="testTime" th:value="${equipmentlist[0].testTime}"/>
+							</div>
+						</td>
+						<th width="10%">受检性质:</th>
+						<td width="15%">
+							<div class="col-sm-12 lf-td-div tooltip-show" data-toggle="tooltip" data-html="true">
+								<input readonly="readonly" type="text" class="form-control" name="testProperty" th:id="testProperty" th:value="${equipmentlist[0].testProperty}"/>
+							</div>
+						</td>
+					</tr>
+					
+					<tr>
+						<th width="10%">委托单位:</th>
+						<td width="15%">
+							<div class="col-sm-12 lf-td-div tooltip-show" data-toggle="tooltip" data-html="true">
+								<input readonly="readonly" type="text" class="form-control" name="trustCompany" th:id="trustCompany" th:value="${equipmentlist[0].trustCompany}"/>
+							</div>
+						</td>
+						<th width="10%">委托单位地址:</th>
+						<td width="15%">
+							<div class="col-sm-12 lf-td-div tooltip-show" data-toggle="tooltip" data-html="true">
+								<input readonly="readonly" type="text" class="form-control" name="trustCompanyAdress" th:id="trustCompanyAdress" th:value="${equipmentlist[0].trustCompanyAdress}"/>
+							</div>
+						</td>
+						<th width="10%">受检单位:</th>
+						<td width="15%">
+							<div class="col-sm-12 lf-td-div tooltip-show" data-toggle="tooltip" data-html="true">
+								<input readonly="readonly" type="text" class="form-control" name="inspectedCompany" th:id="inspectedCompany" th:value="${equipmentlist[0].inspectedCompany}"/>
+							</div>
+						</td>
+						<th width="10%">受检单位地址:</th>
+						<td width="15%">
+							<div class="col-sm-12 lf-td-div tooltip-show" data-toggle="tooltip" data-html="true">
+								<input readonly="readonly" type="text" class="form-control" name="inspectedCompanyAdress" th:id="inspectedCompanyAdress" th:value="${equipmentlist[0].inspectedCompanyAdress}"/>
+							</div>
+						</td>
+					</tr>
+					
+					<tr>
+						<th width="10%">生产单位:</th>
+						<td width="15%">
+							<div class="col-sm-12 lf-td-div tooltip-show" data-toggle="tooltip" data-html="true">
+								<input readonly="readonly" type="text" class="form-control" name="productor" th:id="productor" th:value="${equipmentlist[0].productor}"/>
+							</div>
+						</td>
+						<th width="10%">生产单位地址:</th>
+						<td width="15%">
+							<div class="col-sm-12 lf-td-div tooltip-show" data-toggle="tooltip" data-html="true">
+								<input readonly="readonly" type="text" class="form-control" name="productAdress" th:id="productAdress" th:value="${equipmentlist[0].productAdress}"/>
+							</div>
+						</td>
+						<th width="10%">生产时间:</th>
+						<td width="15%">
+							<div class="col-sm-12 lf-td-div tooltip-show" data-toggle="tooltip" data-html="true">
+								<input readonly="readonly" type="text" class="form-control" name="productDate" th:id="productDate" th:value="${equipmentlist[0].productDate}"/>
+							</div>
+						</td>
+						<th width="10%">检测依据:</th>
+						<td width="15%">
+							<div class="col-sm-12 lf-td-div tooltip-show" data-toggle="tooltip" data-html="true">
+								<input readonly="readonly" type="text" class="form-control" name="testBasis" th:id="testBasis" th:value="${equipmentlist[0].testBasis}"/>
+							</div>
+						</td>
+					</tr>
+					
+					<tr>
+						<th width="10%">到样日期:</th>
+						<td width="15%">
+							<div class="col-sm-12 lf-td-div tooltip-show" data-toggle="tooltip" data-html="true">
+								<input readonly="readonly" type="text" class="form-control" name="sampleData" th:id="sampleData" th:value="${equipmentlist[0].sampleData}"/>
+							</div>
+						</td>
+						<th width="10%">环境温度:</th>
+						<td width="15%">
+							<div class="col-sm-12 lf-td-div tooltip-show" data-toggle="tooltip" data-html="true">
+								<input readonly="readonly" type="text" class="form-control" name="temperature" th:id="temperature" th:value="${equipmentlist[0].temperature}"/>
+							</div>
+						</td>
+						<th width="10%">相对湿度:</th>
+						<td width="15%">
+							<div class="col-sm-12 lf-td-div tooltip-show" data-toggle="tooltip" data-html="true">
+								<input readonly="readonly" type="text" class="form-control" name="humidity" th:id="humidity" th:value="${equipmentlist[0].humidity}"/>
+							</div>
+						</td>
+						<th width="10%">备注:</th>
+						<td width="15%">
+							<div class="col-sm-12 lf-td-div tooltip-show" data-toggle="tooltip" data-html="true">
+								<input readonly="readonly" type="text" class="form-control" name="remark" th:id="remark" th:value="${equipmentlist[0].remark}"/>
+							</div>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		
+			<table class="table table-striped" id="equipmentsTable">
+				<thead>
+				<tr>
+					<th>序</th>
+					<th></th>
+					<th>号</th>
+					<th>方案</th>
+					<th></th>
+					<th>用例</th>
+					<th></th>
+					<th>动作</th>
+					<th></th>
+					<th>仪器</th>
+					<th></th>
+					<th>参数</th>
+					<th>参考值</th>
+					<th>测试结果</th>
+					<th>结论</th>
+					<th>是否合格</th>
+				</tr>
+				</thead>
+				<tbody id="equipmentsTBody">
+				<tr th:each="stepsOb,iterStat : ${dataList}">
+					<td width="1%" style={type:hidden;}>
+						<div class="col-sm-12 lf-td-div">
+							<input class="form-control" th:id="projectId+${iterStat.count}" type="hidden" name="projectId"  th:value="${project.projectId}"/>
+						</div>
+					</td>
+					<td width="1%" style={type:hidden;}>
+						<div class="col-sm-12 lf-td-div">
+							<label th:id="xuhao+${iterStat.count}"  th:text="${iterStat.count}"></label>
+							<input class="form-control" th:id="projectName+${iterStat.count}" type="hidden" name="projectName"  th:value="${project.projectName}"/>
+						</div>
+					</td>
+				
+					<td width="1%">
+						<div class="col-sm-12 lf-td-div tooltip-show" data-toggle="tooltip" data-html="true" th:title="'<div align=&quot;left&quot; style=&quot;word-wrap:break-word&quot;>'+${stepsOb.planId}+'</div>'">
+							<input class="form-control" type="hidden" name="planId" th:id="planId+${iterStat.count}" th:value="${stepsOb.planId}"/>
+						</div>
+					</td>
+					<td width="10%">
+						<div class="col-sm-12 lf-td-div tooltip-show" data-toggle="tooltip" data-html="true" th:title="'<div align=&quot;left&quot; style=&quot;word-wrap:break-word&quot;>'+${stepsOb.planName}+'</div>'">
+							<input readonly="readonly" type="text" class="form-control" name="planName" th:id="planName+${iterStat.count}" th:value="${stepsOb.planName}"/>
+						</div>
+					</td>
+					
+					<td width="1%">
+						<div class="col-sm-12 lf-td-div tooltip-show" data-toggle="tooltip" data-html="true" th:title="'<div align=&quot;left&quot; style=&quot;word-wrap:break-word&quot;>'+${stepsOb.testCaseId}+'</div>'">
+							<input class="form-control" type="hidden" name="testCaseId" th:id="testCaseId+${iterStat.count}" th:value="${stepsOb.testCaseId}"/>
+						</div>
+					</td>
+					<td width="10%">
+						<div class="col-sm-12 lf-td-div tooltip-show" data-toggle="tooltip" data-html="true" th:title="'<div align=&quot;left&quot; style=&quot;word-wrap:break-word&quot;>'+${stepsOb.testCaseName}+'</div>'">
+							<input readonly="readonly" type="text" class="form-control" name="testCaseName" th:id="testCaseName+${iterStat.count}" th:value="${stepsOb.testCaseName}"/>
+						</div>
+					</td>
+					
+					<td width="1%">
+						<div class="col-sm-12 lf-td-div tooltip-show" data-toggle="tooltip" data-html="true" th:title="'<div align=&quot;left&quot; style=&quot;word-wrap:break-word&quot;>'+${stepsOb.actionId}+'</div>'">
+							<input class="form-control" type="hidden" name="actionId" th:id="actionId+${iterStat.count}" th:value="${stepsOb.actionId}"/>
+						</div>
+					</td>
+					<td width="10%">
+						<div class="col-sm-12 lf-td-div tooltip-show" data-toggle="tooltip" data-html="true" th:title="'<div align=&quot;left&quot; style=&quot;word-wrap:break-word&quot;>'+${stepsOb.actionName}+'</div>'">
+							<input readonly="readonly" type="text" class="form-control" name="actionName" th:id="actionName+${iterStat.count}" th:value="${stepsOb.actionName}"/>
+						</div>
+					</td>
+					
+					<td width="1%">
+						<div class="col-sm-12 lf-td-div tooltip-show" data-toggle="tooltip" data-html="true" th:title="'<div align=&quot;left&quot; style=&quot;word-wrap:break-word&quot;>'+${stepsOb.postId}+'</div>'">
+							<input class="form-control" type="hidden" name="postId" th:id="postId+${iterStat.count}" th:value="${stepsOb.postId}"/>
+						</div>
+					</td>
+					<td width="7%">
+						<div class="col-sm-12 lf-td-div tooltip-show" data-toggle="tooltip" data-html="true" th:title="'<div align=&quot;left&quot; style=&quot;word-wrap:break-word&quot;>'+${stepsOb.postName}+'</div>'">
+							<input readonly="readonly" type="text" class="form-control" name="postName" th:id="postName+${iterStat.count}" th:value="${stepsOb.postName}"/>
+						</div>
+					</td>
+					
+					<td width="1%">
+						<div class="col-sm-12 lf-td-div tooltip-show" data-toggle="tooltip" data-html="true" th:title="'<div align=&quot;left&quot; style=&quot;word-wrap:break-word&quot;>'+${stepsOb.paramsId}+'</div>'">
+							<input class="form-control" type="hidden" name="paramsId" th:id="paramsId+${iterStat.count}" th:value="${stepsOb.paramsId}"/>
+						</div>
+					</td>
+					<td width="7%">
+						<div class="col-sm-12 lf-td-div tooltip-show" data-toggle="tooltip" data-html="true" th:title="'<div align=&quot;left&quot; style=&quot;word-wrap:break-word&quot;>'+${stepsOb.paramsName}+'</div>'">
+							<input readonly="readonly" type="text" class="form-control" name="paramsName" th:id="paramsName+${iterStat.count}" th:value="${stepsOb.paramsName}"/>
+						</div>
+					</td>
+					
+					<td width="7%">
+						<div class="col-sm-12 lf-td-div tooltip-show" data-toggle="tooltip" data-html="true" th:title="'<div align=&quot;left&quot; style=&quot;word-wrap:break-word&quot;>'+${stepsOb.paramsName}+'</div>'">
+							<input readonly="readonly" type="text" class="form-control" name="normalValue" th:id="normalValue+${iterStat.count}" th:value="${stepsOb.normalValue}"/>
+						</div>
+					</td>
+					
+					<td width="7%">
+						<div class="col-sm-12 lf-td-div tooltip-show" data-toggle="tooltip" data-html="true" th:title="'<div align=&quot;left&quot; style=&quot;word-wrap:break-word&quot;>'+${stepsOb.result}+'</div>'">
+							<input type="text" class="form-control" name="result" th:id="result+${iterStat.count}" th:value="${stepsOb.result}"/>
+						</div>
+					</td>
+					
+					<td width="10%">
+						<div class="col-sm-12 lf-td-div tooltip-show" data-toggle="tooltip" data-html="true" th:title="'<div align=&quot;left&quot; style=&quot;word-wrap:break-word&quot;>'+${stepsOb.calcResult}+'</div>'">
+							<input readonly="readonly" type="text" class="form-control" name="calcResult" th:id="calcResult+${iterStat.count}" th:value="${stepsOb.calcResult}"/>
+						</div>
+					</td>
+					
+					<td width="5%">
+						<div class="col-sm-12 lf-td-div tooltip-show" data-toggle="tooltip" data-html="true" th:title="'<div align=&quot;left&quot; style=&quot;word-wrap:break-word&quot;>'+${stepsOb.isQualified}+'</div>'">
+							<input readonly="readonly" type="text" class="form-control" name="isQualified" th:id="isQualified+${iterStat.count}" th:value="${stepsOb.isQualified}"/>
+						</div>
+					</td>
+					
+					<td width="5%" style="vertical-align: middle;">
+						<div class="col-sm-12 lf-td-div tooltip-show" data-toggle="tooltip" data-html="true" th:title="'<div align=&quot;left&quot; style=&quot;word-wrap:break-word&quot;>'+${stepsOb.source}+'</div>'">
+						    <a class="btn btn-success btn-xs" onclick="resetResult(this.parentNode.parentNode.parentNode.rowIndex)">
+		            			<i class="fa fa-edit"></i> 修改
+		       				</a>
+						</div>
+					</td>
+				</tr>
+				</tbody>
+			</table>
+		</div>
+	</form>
+	
+	<div class="row">
+		<div class="col-lg-4 text-center" style="width: 100%">
+		<shiro:hasPermission name="testmanagmt:projectExe:edit">
+				<a class="btn btn-success btn-xs" id="saveBtn" onclick="saveResult()">
+		            <i class="fa fa-save"></i> 保存结果
+		        </a>
+				<a class="btn btn-warning btn-xs" id="saveBtn" onclick="submitHandler()">
+		            <i class="fa fa-download"></i> 生成报告
+		        </a>
+		</shiro:hasPermission>
+		</div>
+	</div> 
+</div>
+<!-- expectedResult -->
+<div th:include="include::footer"></div>
+<!-- bootstrap-suggest 下拉搜索框插件 -->
+<script th:src="@{/ajax/libs/bootstrap-suggest/bootstrap-suggest.min.js}"></script>
+<script type="text/javascript">
+	var prefix = ctx + "testmanagmt/projectExe";
+	
+	var projectId = $("#projectId").html();
+
+
+	function resetResult(rowId){
+		var projectId = $("#projectId"+rowId).val();
+		var planId = $("#planId"+rowId).val();
+		var testCaseId = $("#testCaseId"+rowId).val();
+		var actionId = $("#actionId"+rowId).val();
+		var paramsId = $("#paramsId"+rowId).val();
+		
+		var result = $("#result"+rowId).val();
+		var calcResult = $("#calcResult"+rowId).val();
+		
+		console.log(result);
+		console.log(calcResult);
+		//var projectId = document.getElementById('projectId'+rowId).val();
+		
+		var row = {
+			"projectId":projectId,
+			"planId":planId,
+			"testCaseId":testCaseId,
+			"actionId":actionId,
+			"paramsId":paramsId,
+			
+			"result":result,
+			"calcResult":calcResult
+		}
+		console.log(row);
+		var localUrl = ctx + "testmanagmt/projectExe/testResultDetail/"+projectId;
+ 		$.ajax({
+			url: "/testmanagmt/projectExe/resetResult",
+			type: "post",
+			dataType: "json",
+			contentType:"application/json",
+			data: JSON.stringify(row),
+			beforeSend: function () {
+				$.modal.loading("正在处理中，请稍后...");
+				$.modal.disable();
+			},
+			success: function(result) {
+				setTimeout(function(){
+					location.replace(localUrl);
+				},800);
+			}
+		});
+	}
+	
+	function readFromInterface(resultId){
+		//alert(resultId);
+		document.getElementById('result'+resultId).value=resultId;
+		document.getElementById('source'+resultId).value=0;
+	}
+	
+	function submitHandler(){
+		var url = ctx+"system/file/generateReport/"+projectId;
+		$.operate.get(url);
+	}
+	
+	function saveResult(){
+		var url = ctx+"system/project/saveResult/"+projectId;
+		$.operate.get(url);
+	}
+</script>
+</body>
+</html>

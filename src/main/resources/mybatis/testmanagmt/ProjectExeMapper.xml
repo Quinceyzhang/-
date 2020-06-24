@@ -1,0 +1,240 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.luckyframe.project.testmanagmt.projectExe.mapper.ProjectExeMapper">
+
+    <resultMap type="Project" id="ProjectResult">
+        <result property="projectId"    column="project_id"    />
+        <result property="projectName"    column="project_name"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="remark"    column="remark"    />
+        <result property="status"    column="status"    />
+        <result property="isQualified"    column="is_qualified"    />
+    </resultMap>
+    
+    <resultMap type="GetResult" id="GetResult">
+        <result property="projectId"    column="project_id"    />
+        
+        <result property="planId"    column="plan_id"    />
+        <result property="testCaseId"    column="testCase_id"    />
+        <result property="actionId"    column="action_id"    />
+        
+        <result property="paramsId"    column="params_id"    />
+        <result property="type"    column="type"    />
+        <result property="result"    column="result"    />
+        <result property="maxValue"    column="max_value"    />
+        <result property="minValue"    column="min_value"    />
+        <result property="calcResult"    column="calc_result"    />
+        <result property="isQualified"    column="is_qualified"    />
+    </resultMap>
+
+    <resultMap type="ProjectExe" id="ProjectDataResult">
+        <result property="projectId"    column="project_id"    />
+        <result property="projectName"    column="project_name"    />
+        
+        <result property="planId"    column="plan_id"    />
+        <result property="planName"    column="plan_name"    />
+        
+        <result property="testCaseId"    column="testCase_id"    />
+        <result property="testCaseName"    column="testCaseName"    />
+        
+        <result property="actionId"    column="action_id"    />
+        <result property="actionName"    column="action"    />
+        
+        <result property="postId"    column="post_id"    />
+        <result property="postName"    column="post_name"    />
+        
+        <result property="paramsId"    column="params_id"    />
+        <result property="paramsName"    column="params_name"    />
+    </resultMap>
+    
+    <resultMap type="ProjectExe" id="ProjectResultResult">
+        <result property="projectId"    column="project_id"    />
+        <result property="projectName"    column="project_name"    />
+        
+        <result property="planId"    column="plan_id"    />
+        <result property="planName"    column="plan_name"    />
+        
+        <result property="testCaseId"    column="testCase_id"    />
+        <result property="testCaseName"    column="testCase_Name"    />
+        
+        <result property="actionId"    column="action_id"    />
+        <result property="actionName"    column="action_name"    />
+        
+        <result property="postId"    column="post_id"    />
+        <result property="postName"    column="post_name"    />
+        
+        <result property="paramsId"    column="params_id"    />
+        <result property="paramsName"    column="params_name"    />
+        <result property="normalValue"    column="normalvalue"    />
+        <result property="result"    column="result"    />
+        <result property="calcResult"    column="calc_result"    />
+        <result property="isQualified"    column="is_qualified"    />
+    </resultMap>
+    
+    <sql id="selectProjectVo">
+        select p.project_id, p.project_name, p.create_by, p.create_time,p.remark,p.status,p.is_qualified from sys_project p
+    </sql>
+    
+    
+    <select id="selectDataListByProjectId" parameterType="Integer" resultMap="ProjectDataResult">
+        SELECT *  from(
+        SELECT
+			sp.project_id,
+			sp.project_name,
+			ppp.plan_id,
+			pp.plan_name,
+			pt.testcase_id,
+			tc.testCaseName,
+			tca.action_id,
+			a.action,
+			ap.params_id,
+			ap.params_name,
+			ap.post_id,
+			ap.post_name
+		FROM
+			sys_project sp
+		LEFT JOIN project_project_plan ppp ON sp.project_id = ppp.project_id
+		LEFT JOIN project_plan pp ON ppp.plan_id = pp.plan_id
+		LEFT JOIN plan_testcase pt ON ppp.plan_id = pt.plan_id
+		LEFT JOIN test_case tc ON pt.testcase_id = tc.testcaseid
+		LEFT JOIN test_case_action tca ON tc.testcaseid = tca.testcase_id
+		LEFT JOIN action a ON tca.action_id = a.id
+		LEFT JOIN action_params ap ON a.id = ap.action_id
+		WHERE sp.project_id = #{projectId}
+		) a where a.params_id is not null
+    </select>
+    
+    <update id="setProjectStatusAs" parameterType="Integer">
+        update sys_project 
+          set  status = 1
+        where project_id = #{projectId}
+    </update>
+    
+    
+    <insert id="insertProjectresult" parameterType="ProjectExe">
+        insert into test_result
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="projectId != null  ">project_id,</if>
+            <if test="planId != null  ">   plan_id,</if>
+            <if test="testCaseId != null  ">testCase_id,</if>
+            <if test="actionId != null  ">action_id,</if>
+            <if test="postId != null  ">post_id,</if>
+            <if test="paramsId != null  ">params_id,</if>
+            <if test="projectName != null  and projectName != ''  ">project_name,</if>
+            <if test="planName != null  and planName != ''  ">plan_name,</if>
+            <if test="testCaseName != null  and testCaseName != ''  ">testcase_name,</if>
+            <if test="actionName != null  and actionName != ''  ">action_name,</if>
+            <if test="postName != null  and postName != ''  ">post_name,</if>
+            <if test="paramsName != null  and paramsName != ''  ">params_name,</if>
+            <if test="source != null  and source != ''  ">source,</if>
+            <if test="result != null  and result != ''  ">result,</if>
+            <if test="isQualified != null  and isQualified != ''  ">is_qualified,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="projectId != null  ">#{projectId},</if>
+            <if test="planId != null  ">#{planId},</if>
+            <if test="testCaseId != null  ">#{testCaseId},</if>
+            <if test="actionId != null  ">#{actionId},</if>
+            <if test="postId != null  ">#{postId},</if>
+            <if test="paramsId != null  ">#{paramsId},</if>
+            <if test="projectName != null  and projectName != ''  ">#{projectName},</if>
+            <if test="planName != null  and planName != ''  ">#{planName},</if>
+            <if test="testCaseName != null  and testCaseName != ''  ">#{testCaseName},</if>
+            <if test="actionName != null  and actionName != ''  ">#{actionName},</if>
+            <if test="postName != null  and postName != ''  ">#{postName},</if>
+            <if test="paramsName != null  and paramsName != ''  ">#{paramsName},</if>
+            <if test="source != null  and source != ''  ">#{source},</if>
+            <if test="result != null  and result != ''  ">#{result},</if>
+            <if test="isQualified != null  and isQualified != ''  ">#{isQualified},</if>
+        </trim>
+    </insert>   
+    
+    <select id="selectTestProjectList" parameterType="Project" resultMap="ProjectResult">
+        <include refid="selectProjectVo"/>
+        <where>  
+             <if test="projectName != null  and projectName != '' "> and p.project_name like concat('%', #{projectName}, '%')</if>
+             <if test="createBy != null and createBy != ''"> and p.create_by like concat('%', #{createBy}, '%')</if>
+             and p.status != 2
+             and (select count(*) from project_project_plan ppp where ppp.project_id = p.project_id) > 0
+         </where>
+          order by p.create_time desc
+    </select>
+    
+    <select id="selectOverProjectList" parameterType="Project" resultMap="ProjectResult">
+        <include refid="selectProjectVo"/>
+        <where>  
+             <if test="projectName != null  and projectName != '' "> and p.project_name like concat('%', #{projectName}, '%')</if>
+             <if test="createBy != null and createBy != ''"> and p.create_by like concat('%', #{createBy}, '%')</if>
+             and p.status = 2
+         </where>
+          order by p.create_time desc
+    </select>
+    
+    <update id="setProjectStatusAsEnd" parameterType="Integer">
+        update sys_project 
+          set  status = 2
+        where project_id = #{projectId}
+    </update>
+    
+    <select id="getProjectResult" parameterType="Integer" resultMap="GetResult">
+		select tr.project_id,tr.plan_id,tr.testcase_id,tr.action_id,tr.params_id,tr.result,pcp.type,pcp.max_value,pcp.min_value,tr.calc_result from test_result tr 
+		left join project_case_params pcp on tr.params_id = pcp.params_id
+		where tr.project_id = #{projectId}
+    </select>
+    
+    <update id="insertCalcResult" parameterType="GetResult">
+        update test_result 
+          set  calc_result = #{calcResult},is_qualified = #{isQualified}
+        where project_id = #{projectId} and plan_id = #{planId} 
+        and testcase_id = #{testCaseId} and action_id = #{actionId} 
+        and params_id = #{paramsId}
+    </update> 
+    
+    <select id="selectResultListByProjectId" parameterType="Integer" resultMap="ProjectResultResult">
+        SELECT
+			tr.project_id,
+			tr.project_name,
+			tr.plan_id,
+			tr.plan_name,
+			tr.testcase_id,
+			tr.testCase_Name,
+			tr.action_id,
+			tr.action_name,
+			tr.params_id,
+			tr.params_name,
+			tr.post_id,
+			tr.post_name,
+			tr.result,
+			tr.calc_result,
+			tr.is_qualified,
+		
+		IF (
+			pp.type = 0,
+			concat(
+				pp.min_value,
+				'~',
+				pp.max_value,
+				pp.params_unit
+			),
+			pp.min_value
+		) normalvalue
+		FROM
+			test_result tr
+		LEFT JOIN project_case_params pp ON tr.params_id = pp.params_id
+		WHERE
+			tr.project_id = #{projectId}
+    </select>
+    
+    <update id="resetResult" parameterType="java.util.HashMap">
+        update test_result 
+          set  result = #{result}
+        where project_id = #{projectId}
+        and plan_id = #{planId}
+        and testcase_id = #{testCaseId}
+        and action_id = #{actionId} 
+        and params_id = #{paramsId}
+    </update> 
+</mapper>

@@ -1,0 +1,247 @@
+<!DOCTYPE HTML>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<meta charset="utf-8">
+<head th:include="include :: header"></head>
+<body class="gray-bg">
+    
+     <div class="container-div">
+		<div class="row">
+			<div class="col-sm-12 search-collapse">
+				<form id="formId">
+					<div class="select-list">
+						<ul>
+							<li>
+								项目名称：<input type="text" name="projectName"/>
+							</li>
+
+							<li>
+								创建人：<input type="text" name="createBy"/>
+							</li>
+
+							<li>
+								<a class="btn btn-primary btn-rounded btn-sm" onclick="$.table.search()"><i class="fa fa-search"></i>&nbsp;搜索</a>
+								<a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset()"><i class="fa fa-refresh"></i>&nbsp;重置</a>
+							</li>
+						</ul>
+					</div>
+				</form>
+			</div>
+			
+	        <div class="btn-group-sm hidden-xs" id="toolbar" role="group">
+				<shiro:hasPermission name="system:project:add">
+				<a class="btn btn-success" onclick="$.operate.add()">
+					<i class="fa fa-plus"></i> 添加
+				</a>
+				</shiro:hasPermission>
+				
+				<shiro:hasPermission name="system:project:add">
+				<a class="btn btn-warning btn-edit disabled" onclick="$.operate.copyProject()">
+					<i class="fa fa-plus"></i> 复制
+				</a>
+				</shiro:hasPermission>
+				
+				<!-- 				<shiro:hasPermission name="testmanagmt:projectCaseParams:edit">
+				<a class="btn btn-primary btn-edit disabled" onclick="$.operate.edit()">
+					<i class="fa fa-edit"></i> 修改
+				</a>
+				</shiro:hasPermission> -->
+				
+				<shiro:hasPermission name="system:project:remove">
+				<a class="btn btn-danger btn-del btn-del disabled" onclick="$.operate.removeAll()">
+					<i class="fa fa-remove"></i> 删除
+				</a>
+				</shiro:hasPermission>
+			</div>
+			<div class="col-sm-12 select-table table-striped">
+				<table id="bootstrap-table" data-mobile-responsive="true"></table>
+			</div>
+		</div>
+	</div>
+	
+    <div th:include="include :: footer"></div>
+    <script th:inline="javascript">
+        var editFlag = [[${@permission.hasPermi('system:project:edit')}]];
+        var removeFlag = [[${@permission.hasPermi('system:project:remove')}]];
+        var prefix = ctx + "system/project";
+        
+        $(function() {
+            var options = {
+                url: prefix + "/list",
+                createUrl: prefix + "/add",
+                updateUrl: prefix + "/edit/{id}",
+                customEquipUrl: prefix + "/editEquipment/{id}",
+                customPlanUrl: prefix + "/planList/{id}",
+                detailUrl:prefix + "/detail/{id}",
+                removeUrl: prefix + "/remove",
+				exportUrl: prefix + "/export",
+				copyProjectUrl: prefix + "/copyProject",
+                modalName: "项目",
+				search: false,
+		        showExport: true,
+		        childrenModalName: "项目编辑",
+		        childrenModalEquipName: "项目编辑",
+		        childrenModalPlanName:"项目方案编辑",
+		        childrenModalDetailName:"项目详情",
+		        pageSize: 5000,
+				pagination: false,
+		        detailView: false, //是否显示父子表
+                columns: [{
+		            checkbox: true
+		        },
+				{
+					field : 'projectId', 
+					title : '项目ID',
+					visible: false,
+					formatter: function (value, row, index) {
+                        return '<a class="btn btn-info btn-edit" onclick="$.operate.customFullEquip('+row.projectId+')">'+value+'</a>';
+                    }
+				},
+				 {
+                    field: 'Number',
+                    title: '序号',
+                    formatter: function (value, row, index) {
+                        return index+1;
+                    }
+				},
+				{
+					field : 'projectName', 
+					title : '项目名称',
+					/* editable: {
+                        type: 'text',
+                        title: '项目名称',
+                        emptytext: "【项目名称】为空",
+                        validate: function (value) {
+                            if (value.length > 50)
+                                return '项目名称不能超过50个字符';
+                            if (value.length == 0)
+                                return '项目名称不能为空';
+                        }
+                    } */
+				},
+				{
+					field : 'createBy', 
+					title : '创建人'
+				},
+				{
+					field : 'createTime', 
+					title : '创建时间'
+				},
+				{
+					field : 'remark', 
+					title : '备注',
+					/* editable: {
+                        type: 'textarea',
+                        title: '备注',
+                        emptytext: "【备注】为空",
+                        validate: function (value) {
+                            if (value.length > 200)
+                                return '备注不能超过200个字符';
+                        }
+                    } */
+				},
+				{
+					field : 'status', 
+					title : '项目状态',
+					formatter: function(value, row, index) {
+						if(row.status == 0){
+							return "未开始";
+						}else if(row.status == 1){
+							return "已检测";
+						}else{
+							return "结束";
+						}
+					}
+				},
+		        {
+		            title: '操作',
+		            align: 'center',
+		            formatter: function(value, row, index) {
+		            	if(row.status == 0){
+		            		var actions = [];
+			            	actions.push('<a class="btn btn-info btn-xs" onclick="$.operate.customFullDetail('+row.projectId+','+row.status+')"><i class="fa fa-list-ol"></i>详情</a> ');
+			            	actions.push('<a class="btn btn-success btn-xs ' + editFlag + '" href="#" onclick="$.operate.edit(\'' + row.projectId + '\')"><i class="fa fa-edit"></i>编辑</a> ');
+	                        actions.push('<a class="btn btn-danger btn-xs ' + removeFlag + '" href="#" onclick="$.operate.remove(\'' + row.projectId + '\')"><i class="fa fa-remove"></i>删除</a>');
+							return actions.join('');
+		            	}else{
+		            		var actions = [];
+			            	actions.push('<a class="btn btn-info btn-xs" onclick="$.operate.customFullDetail('+row.projectId+')"><i class="fa fa-list-ol"></i>详情</a> ');
+							return actions.join('');
+		            	}
+		            }
+		        }],
+		      //注册加载子表的事件。注意下这里的三个参数！
+	            onExpandRow: function (index, row, $detail) {
+	                InitSubTable(index, row, $detail);
+	            }
+            };
+            
+	        //初始化子表格(无限循环)
+	        InitSubTable = function (index, row, $detail) {
+	            var cur_table = $detail.html('<table style="table-layout:fixed"></table>').find('table');
+	            $(cur_table).bootstrapTable({
+	                url: prefix + '/equipmentList',
+	                method: 'get',
+	                queryParams: {
+	                    projectId: row.projectId
+	                },
+	                clickToSelect: true,
+	                detailView: false,//父子表
+	                uniqueId: "equipmentId",
+	                columns: [{
+	                    checkbox: true,
+	                    visible: false
+	                }, {
+	                    field: 'equipmentId',
+	                    title: '设备编号',
+	                    width: '5%',
+	                    visible: false,
+	                    class: 'myTDLengthHidden'
+	                }, {
+	                    field: 'equipment',
+	                    title: '设备名称',
+	                    width: '15%',
+	                    class: 'myTDLengthHidden'
+	                }, {
+	                    field: 'model',
+	                    title: '型号',
+	                    width: '10%',
+	                    class: 'myTDLengthHidden'
+	                }, {
+	                    field: 'productor',
+	                    title: '生产厂家',
+	                    width: '15%',
+	                    class: 'myTDLengthHidden'
+	                }, {
+	                    field: 'count',
+	                    title: '数量',
+	                    width: '10%',
+	                    class: 'myTDLengthHidden'
+	                }, {
+	                    field: 'testBy',
+	                    title: '检测人员',
+	                    width: '10%',
+	                    class: 'myTDLengthHidden'
+	                }, {
+	                    field: 'testTime',
+	                    title: '检测时间',
+	                    width: '10%',
+	                    class: 'myTDLengthHidden'
+	                }, {
+	                    field: 'remark',
+	                    title: '备注',
+	                    width: '15%',
+	                    class: 'myTDLengthHidden'
+	                }],
+	                //无线循环取子表，直到子表里面没有记录
+	                onExpandRow: function (index, row, $Subdetail) {
+	                    oInit.InitSubTable(index, row, $Subdetail);
+	                },
+	            });
+
+	        };
+            
+            $.table.init(options);
+        });
+    </script>
+</body>
+</html>
